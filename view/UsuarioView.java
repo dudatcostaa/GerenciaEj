@@ -2,10 +2,14 @@ package view;
 
 import controller.UsuarioController;
 import controller.KambanController;
+import controller.LeadController;
+import controller.SolicitacaoController;
 import controller.BibliotecaController;
 import model.Cargo;
+import model.EmpresaJunior;
 import model.Usuario;
 import model.Projeto;
+import model.SolicitacaoEJ;
 import model.StatusProjeto;
 import model.Arquivo;
 import model.BibliotecaService;
@@ -78,53 +82,11 @@ public class UsuarioView {
         if (usuarioLogado != null) {
             System.out.println("\n[SUCESSO] Login realizado!");
             System.out.println("Bem-vindo(a), " + usuarioLogado.getNome() + " [" + usuarioLogado.getCargo() + "]");
-            
+
             // Abre o menu interno do sistema passando o objeto do usuário que logou
             exibirMenuInternoEJ(usuarioLogado);
         } else {
             System.out.println("\n[ERRO] E-mail ou senha incorretos");
-        }
-    }
-
-    private void exibirMenuInternoEJ(Usuario usuarioLogado) {
-        while (true) {
-            System.out.println("\n========================================");
-            System.out.println("      GERENCIA EJ - MENU INTERNO        ");
-            System.out.println("========================================");
-            System.out.println("1. Acessar Quadros Kanban");
-            System.out.println("2. Acessar Biblioteca");
-            System.out.println("0. Fazer Logout");
-            System.out.print("Escolha uma opção: ");
-
-            String entrada = leitor.nextLine();
-
-            if (entrada.equals("1")) {
-                // Instancia a View de Kanban passando o Scanner atual para não dar conflito de leitura
-                KambanView kView = new KambanView(leitor);
-                // Instancia o controlador passando a view e a lista mockada
-                KambanController kController = new KambanController(kView, mockProjetos);
-                kController.iniciar();
-            } 
-            else if (entrada.equals("2")) {
-                // Instancia a View de Biblioteca da sua amiga
-                BibliotecaView bView = new BibliotecaView();
-                // O controlador dela gerencia o loop interno usando os métodos "mostrarMenu" da BibliotecaView
-                BibliotecaController bController = new BibliotecaController(
-                    biblioService, 
-                    bView, 
-                    usuarioLogado, 
-                    controller.getUsuariosDoSistema(), 
-                    idsAtivos
-                );
-                bController.iniciar();
-            } 
-            else if (entrada.equals("0")) {
-                System.out.println("Efetuando logout... Voltando à tela inicial.");
-                break;
-            } 
-            else {
-                System.out.println("[ERRO] Opção inválida!");
-            }
         }
     }
 
@@ -154,6 +116,62 @@ public class UsuarioView {
         }
     }
 
+    private void exibirMenuInternoEJ(Usuario usuarioLogado) {
+        while (true) {
+            System.out.println("\n========================================");
+            System.out.println("      GERENCIA EJ - MENU INTERNO        ");
+            System.out.println("========================================");
+            System.out.println("1. Acessar Quadros Kanban");
+            System.out.println("2. Acessar Biblioteca");
+            System.out.println("3. Acessar Módulo de Leads"); // NOVO
+            System.out.println("4. Painel Administrativo (Aprovar EJs)"); // NOVO
+            System.out.println("0. Fazer Logout");
+            System.out.print("Escolha uma opção: ");
+
+            String entrada = leitor.nextLine();
+
+            if (entrada.equals("1")) {
+                KambanView kView = new KambanView(leitor);
+                KambanController kController = new KambanController(kView, mockProjetos);
+                kController.iniciar();
+            } else if (entrada.equals("2")) {
+                BibliotecaView bView = new BibliotecaView();
+                BibliotecaController bController = new BibliotecaController(
+                        biblioService, bView, usuarioLogado,
+                        controller.getUsuariosDoSistema(), idsAtivos);
+                bController.iniciar();
+            } else if (entrada.equals("3")) { // NOVO
+                LeadView leadView = new LeadView();
+                LeadController leadController = new LeadController(leadView);
+                leadController.iniciarModulo();
+            } else if (entrada.equals("4")) { // NOVO
+                executarModuloAdmin();
+            } else if (entrada.equals("0")) {
+                System.out.println("Efetuando logout... Voltando à tela inicial.");
+                break;
+            } else {
+                System.out.println("[ERRO] Opção inválida!");
+            }
+        }
+    }
+
+    // NOVO — copiado da Main2, mas como método privado da view
+    private void executarModuloAdmin() {
+        System.out.println("\n=== Iniciando Módulo Administrativo ===");
+
+        // Dados de teste mockados (igual ao que estava na Main2)
+        Usuario usuarioTeste = new Usuario(1L, "Lorena", "lorena@ufsc.br", "senha123", Cargo.MEMBRO);
+        EmpresaJunior ejTeste = new EmpresaJunior(101L, "Tech Solutions EJ", "12.345.678/0001-99");
+        SolicitacaoEJ solicitacao = new SolicitacaoEJ(501L, "estatuto_tech.pdf", usuarioTeste, ejTeste);
+
+        AdminView adminView = new AdminView();
+        SolicitacaoController solController = new SolicitacaoController(adminView);
+        solController.avaliarSolicitacao(solicitacao);
+
+        System.out.println("\n[Módulo Administrativo finalizado. Pressione ENTER para continuar]");
+        leitor.nextLine();
+    }
+
     private void executarFluxoExclusao() {
         System.out.print("\nTem certeza que deseja excluir uma conta? (Sim/Não): ");
         String confirmacao = leitor.nextLine();
@@ -176,3 +194,5 @@ public class UsuarioView {
         }
     }
 }
+
+// alterando p tentar commitar novamente
