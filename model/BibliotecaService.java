@@ -1,4 +1,5 @@
 package model;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,9 +23,11 @@ public class BibliotecaService {
 
     // verifica se o usuário logado tem permissão para excluir o arquivo
     public boolean podeExcluir(Usuario logado, Arquivo arquivo, List<Long> idsMembrosAtivos) {
-        if (arquivo.getAutorId().equals(logado.getId())) return true; // o autor sempre pode excluir o próprio arquivo
+        if (arquivo.getAutorId().equals(logado.getId()))
+            return true; // o autor sempre pode excluir o próprio arquivo
         if (logado.getCargo() == Cargo.DIRETOR) {
-            return !idsMembrosAtivos.contains(arquivo.getAutorId()); // diretor só pode excluir arquivos de membros inativos
+            return !idsMembrosAtivos.contains(arquivo.getAutorId()); // diretor só pode excluir arquivos de membros
+                                                                     // inativos
         }
         return false; // membro não pode excluir arquivos de outros
     }

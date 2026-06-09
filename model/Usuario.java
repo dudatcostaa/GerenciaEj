@@ -6,6 +6,7 @@ public class Usuario {
     private String email;
     private String senha;
     private Cargo cargo;
+    private EmpresaJunior empresaJunior;
 
     public Usuario(Long id, String nome, String email, String senha, Cargo cargo) {
         this.id = id;
@@ -14,6 +15,8 @@ public class Usuario {
         this.senha = senha;
         this.cargo = cargo;
     }
+
+    public EmpresaJunior getEmpresaJunior() {return empresaJunior;}
 
     public Long getId() {
         return id;
@@ -54,5 +57,9 @@ public class Usuario {
     public void setCargo(Cargo cargo) {
         this.cargo = cargo;
     }
+
+    public void setEmpresaJunior(EmpresaJunior empresaJunior){
+        this.empresaJunior = empresaJunior;
+    };
 }
 
