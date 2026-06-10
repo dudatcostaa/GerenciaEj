@@ -13,7 +13,7 @@ public class Lead {
     public Lead(Long id, String nomeCliente) {
         this.id = id;
         this.nomeCliente = nomeCliente;
-        this.StatusLead = StatusLead.PROSPECCAO;
+        this.StatusLead = model.StatusLead.PROSPECCAO;
         this.dataCriacao = new Date();
         this.dataUltimaModificacao = this.dataCriacao;
     }
@@ -36,6 +36,23 @@ public class Lead {
 
     public Date getDataUltimaModificacao() {
         return dataUltimaModificacao;
+    }
+
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setNomeCliente(String nomeCliente) {
+        this.nomeCliente = nomeCliente;
+    }
+
+    public void setDataCriacao(Date dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    public void setDataUltimaModificacao(Date dataUltimaModificacao) {
+        this.dataUltimaModificacao = dataUltimaModificacao;
     }
 
     public void setStatusLead(StatusLead StatusLead) {
