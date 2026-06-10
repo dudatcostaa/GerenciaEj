@@ -16,27 +16,6 @@ git clone <url-do-repositorio>
 
 ---
 
-### 2. Adicionar o driver do MySQL
-
-Baixe o driver em: https://dev.mysql.com/downloads/connector/j/
-- Escolha **Platform Independent** e baixe o `.zip`
-- Extraia e copie o arquivo `mysql-connector-j-9.7.0.jar` para a pasta `lib/` do projeto
-
----
-
-### 3. Configurar o VS Code
-
-Crie o arquivo `.vscode/settings.json` na raiz do projeto com o conteúdo:
-```json
-{
-    "java.project.referencedLibraries": [
-        "lib/**/*.jar"
-    ]
-}
-```
-
----
-
 ### 4. Criar o banco de dados
 
 Abra o terminal e entre no MySQL:
