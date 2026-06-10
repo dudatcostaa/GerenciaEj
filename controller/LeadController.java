@@ -1,25 +1,21 @@
 package controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import model.Lead;
 import model.StatusLead;
 import view.LeadView;
+import dao.LeadDAO;
 
 public class LeadController {
-    
-    private LeadView view;
-    private List<Lead> baseDeLeads;
-    private Long geradorId;
 
-    // O Controller conhece a View
+    private LeadView view;
+    private LeadDAO dao;
+
     public LeadController(LeadView view) {
         this.view = view;
-        this.baseDeLeads = new ArrayList<>();
-        this.geradorId = 1L;
+        this.dao = new LeadDAO();
     }
 
-    // Método principal que controla o fluxo deste módulo
     public void iniciarModulo() {
         view.exibirMensagemBoasVindas();
         boolean rodando = true;
@@ -49,21 +45,25 @@ public class LeadController {
 
     private void cadastrarLead() {
         String nome = view.pedirNomeNovoLead();
-        Lead novoLead = new Lead(geradorId++, nome);
-        baseDeLeads.add(novoLead);
-        view.exibirMensagemSucessoCriacao(nome);
+        Lead novoLead = dao.cadastrar(nome);
+        if (novoLead != null) {
+            view.exibirMensagemSucessoCriacao(nome);
+        } else {
+            view.exibirErro("Erro ao cadastrar lead.");
+        }
     }
 
     private void visualizarLeads() {
-        // Manda a View imprimir, passando os dados do Model
-        view.exibirPainelLeads(StatusLead.values(), baseDeLeads);
+        List<Lead> lista = dao.listarTodos();
+        view.exibirPainelLeads(StatusLead.values(), lista);
     }
 
     private void editarLead() {
         Long id = view.pedirIdEdicao();
-        Lead leadAlvo = null;
+        List<Lead> lista = dao.listarTodos();
 
-        for (Lead lead : baseDeLeads) {
+        Lead leadAlvo = null;
+        for (Lead lead : lista) {
             if (lead.getId().equals(id)) {
                 leadAlvo = lead;
                 break;
@@ -88,6 +88,7 @@ public class LeadController {
         if (novoStatus != null) {
             StatusLead statusAntigo = leadAlvo.getStatusLead();
             leadAlvo.setStatusLead(novoStatus);
+            dao.atualizarStatus(id, novoStatus);
             view.exibirMensagemSucessoEdicao(leadAlvo.getNomeCliente(), statusAntigo.toString(), novoStatus.toString());
         } else {
             view.exibirErro("Status inválido!");
