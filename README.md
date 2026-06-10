@@ -16,7 +16,7 @@ git clone <url-do-repositorio>
 
 ---
 
-### 4. Criar o banco de dados
+### 2. Criar o banco de dados
 
 Abra o terminal e entre no MySQL:
 ```bash
@@ -35,9 +35,9 @@ mysql -u root -p < gerencia_ej_v2.sql
 
 ---
 
-### 5. Configurar a conexão
+### 3. Configurar a conexão
 
-Abra o arquivo `model/DatabaseConnection.java` e atualize com suas credenciais:
+Abra o arquivo `model/DatabaseConnection.java` e atualize com suas credenciais (se criar com nova_senha, pode deixar assim):
 ```java
 private static final String URL      = "jdbc:mysql://localhost:3306/gerencia_ej";
 private static final String USER     = "root";
@@ -46,7 +46,7 @@ private static final String PASSWORD = "nova_senha";
 
 ---
 
-### 6. Rodar o projeto
+### 4. Rodar o projeto
 ```bash
 java -cp .:lib/mysql-connector-j-9.7.0.jar Main
 ```
