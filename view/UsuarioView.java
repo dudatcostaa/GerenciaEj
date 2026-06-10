@@ -132,7 +132,7 @@ public class UsuarioView {
 
             if (entrada.equals("1")) {
                 KambanView kView = new KambanView(leitor);
-                KambanController kController = new KambanController(kView, mockProjetos);
+                KambanController kController = new KambanController(kView);
                 kController.iniciar();
             } else if (entrada.equals("2")) {
                 BibliotecaView bView = new BibliotecaView();

@@ -1,8 +1,12 @@
-package model;
+package dao;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import model.Cargo;
+import model.DatabaseConnection;
+import model.Usuario;
 
 public class UsuarioDAO {
 
