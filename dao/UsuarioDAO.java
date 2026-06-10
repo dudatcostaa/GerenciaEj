@@ -111,4 +111,18 @@ public class UsuarioDAO {
         Usuario u = new Usuario(id, nome, email, senha, cargo);
         return u;
     }
+
+    // atualiza o cargo e vincula o usuário a uma empresa junior (usado na aprovação de solicitação)
+    public void atualizarCargoEEmpresa(Long id, Cargo cargo, Long empresaJuniorId) {
+        String sql = "UPDATE usuario SET cargo = ?, empresa_junior_id = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, cargo.name());
+            stmt.setLong(2, empresaJuniorId);
+            stmt.setLong(3, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Erro ao atualizar cargo e empresa do usuário: " + e.getMessage());
+        }
+    }
 }
