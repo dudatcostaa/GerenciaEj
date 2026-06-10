@@ -2,26 +2,32 @@ package controller;
 
 import java.util.List;
 import model.Projeto;
+import dao.ProjetoDAO;
 import model.QuadroKamban;
+import dao.QuadroKambanDAO;
 import model.StatusTarefa;
 import model.Tarefa;
+import dao.TarefaDAO;
 import view.KambanView;
 
 public class KambanController {
-    private KambanView view; // a view é invetada pelo construtor
-    private List<Projeto> projetos;
+    private KambanView view;
+    private ProjetoDAO projetoDAO;
+    private QuadroKambanDAO quadroDAO;
+    private TarefaDAO tarefaDAO;
 
-    // construtor
-    public KambanController(KambanView view, List<Projeto> projetos) {
-        this.view = view; 
-        this.projetos = projetos;
+    public KambanController(KambanView view) {
+        this.view = view;
+        this.projetoDAO = new ProjetoDAO();
+        this.quadroDAO = new QuadroKambanDAO();
+        this.tarefaDAO = new TarefaDAO();
     }
 
-    // loop do kamban que estava no main agora fica no controller
     public void iniciar() {
         while (true) {
             int opcao = view.mostrarMenuPrincipal();
             if (opcao == 1) {
+                List<Projeto> projetos = projetoDAO.listarAtivos();
                 view.listarProjetos(projetos);
             } else if (opcao == 2) {
                 acessarKamban();
@@ -33,56 +39,56 @@ public class KambanController {
         }
     }
 
-    // verifica se há projetos e, se tiver, exibe eles para que o usuário possa escolher um
     private void acessarKamban() {
-        // se não houver nenhum projeto em planejamento ou execução não há oq exibir
+        List<Projeto> projetos = projetoDAO.listarAtivos();
+
         if (projetos.isEmpty()) {
-            view.mostrarMensagem("Nenhum projeto em planejamento ou execução");
+            view.mostrarMensagem("Nenhum projeto em planejamento ou execução.");
             return;
         }
 
-        // caso hajam projetos, exibe eles para que o usuário possa escolher um
-        // a exibição e a leitura da escolha agora ficam na view, seguindo o padrão MVC
         int escolha = view.escolherProjeto(projetos);
 
-        // identifica qual projeto o usuário escolheu para abrir o kamban certo
         if (escolha >= 0 && escolha < projetos.size()) {
             Projeto p = projetos.get(escolha);
-            if (p.getQuadro() == null) {
-                p.setQuadro(new QuadroKamban("Kamban: " + p.getNome()));
+            QuadroKamban quadro = quadroDAO.buscarOuCriar(p);
+            if (quadro != null) {
+                // carrega as tarefas do banco no quadro
+                quadro.setTarefas(tarefaDAO.listarPorQuadro(quadro.getId()));
+                menuKamban(quadro);
             }
-            menuKamban(p.getQuadro()); // chama o método que realmente permite que mexa no kamban
         } else {
             view.mostrarMensagem("Projeto inválido.");
         }
     }
 
-    // loop para mexer no kamban
     private void menuKamban(QuadroKamban q) {
         while (true) {
-            view.exibirQuadro(q); // exibe os dados e as tarefas do kamban, usando as cores definidas no requisito nao funcional e no enum
-            
-            // chama o método correto de acordo com a opção escolhida pelo usuario
-            // o menu e a leitura da opção agora ficam na view
+            view.exibirQuadro(q);
             int opcao = view.mostrarMenuKamban(q.getTitulo());
 
             if (opcao == 1) {
-                // cadastra uma tarefa nova
+                // cadastra tarefa nova no banco e adiciona ao quadro em memória
                 String titulo = view.pedirTituloTarefa();
-                q.adicionarTarefa(new Tarefa(q.gerarIdTarefa(), titulo));
+                Tarefa nova = tarefaDAO.cadastrar(titulo, q.getId());
+                if (nova != null) {
+                    q.adicionarTarefa(nova);
+                    quadroDAO.atualizarContador(q);
+                }
             } else if (opcao == 2) {
-                // move a tarefa entre colunas
-                long id = view.pedirIdTarefa(); // pede que o usuário insira o id da tarefa, que é exibido em exibirQuadro()
+                // move tarefa entre colunas e salva no banco
+                long id = view.pedirIdTarefa();
                 Tarefa tarefa = q.getTarefas().stream()
                         .filter(t -> t.getId() == id)
-                        .findFirst() // procura pelo primeiro elemento que corresponde com o filtro
-                        .orElse(null); // se nao achar retorna null
+                        .findFirst()
+                        .orElse(null);
 
-                // se ele encontrar uma tarefa
                 if (tarefa != null) {
                     int novoStatus = view.pedirNovoStatus();
-                    if (novoStatus >= 0 && novoStatus <= 3) { // verifica se é algum dos status válidos
-                        tarefa.setStatus(StatusTarefa.values()[novoStatus]); // se for, seta o status novo
+                    if (novoStatus >= 0 && novoStatus <= 3) {
+                        StatusTarefa status = StatusTarefa.values()[novoStatus];
+                        tarefa.setStatus(status);
+                        tarefaDAO.atualizarStatus(tarefa.getId(), status);
                     } else {
                         view.mostrarMensagem("Status inválido.");
                     }
