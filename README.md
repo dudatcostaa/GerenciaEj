@@ -41,7 +41,7 @@ Abra o arquivo `model/DatabaseConnection.java` e atualize com suas credenciais:
 ```java
 private static final String URL      = "jdbc:mysql://localhost:3306/gerencia_ej";
 private static final String USER     = "root";
-private static final String PASSWORD = "sua_senha";
+private static final String PASSWORD = "nova_senha";
 ```
 
 ---
