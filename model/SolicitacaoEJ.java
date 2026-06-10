@@ -20,18 +20,16 @@ public class SolicitacaoEJ {
         this.dataSolicitacao = new Date(); // registra o momento da solicitação
     }
 
-    // Getters e Setters
-
     public Long getId() {
         return id;
     }
 
-    public StatusSolicitacao getStatus() {
-        return status;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public Date getDataSolicitacao() {
-        return dataSolicitacao;
+    public StatusSolicitacao getStatus() {
+        return status;
     }
 
     public void setStatus(StatusSolicitacao status) {
@@ -42,11 +40,34 @@ public class SolicitacaoEJ {
         return documentoUrl;
     }
 
+    public void setDocumentoUrl(String documentoUrl) {
+        this.documentoUrl = documentoUrl;
+    }
+
+    public Date getDataSolicitacao() {
+        return dataSolicitacao;
+    }
+
+    public void setDataSolicitacao(Date dataSolicitacao) {
+        this.dataSolicitacao = dataSolicitacao;
+    }
+
     public Usuario getUsuario() {
         return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public EmpresaJunior getEmpresaJunior() {
         return empresaJunior;
     }
+
+    public void setEmpresaJunior(EmpresaJunior empresaJunior) {
+        this.empresaJunior = empresaJunior;
+    }
+
+    // Getters e Setters
+
 }
