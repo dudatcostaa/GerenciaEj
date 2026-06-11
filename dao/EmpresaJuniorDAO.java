@@ -1,9 +1,11 @@
 package dao;
 
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import model.DatabaseConnection;
 import model.EmpresaJunior;
 import model.StatusEJ;
-import model.DatabaseConnection;
-import java.sql.*;
 
 public class EmpresaJuniorDAO {
 
@@ -43,5 +45,42 @@ public class EmpresaJuniorDAO {
         } catch (SQLException e) {
             System.err.println("Erro ao atualizar status da EJ: " + e.getMessage());
         }
+    }
+
+    // lista todas as empresas juniores
+    public List<EmpresaJunior> listarTodas() {
+        List<EmpresaJunior> empresas = new ArrayList<>();
+        String sql = "SELECT * FROM empresa_junior";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                // Ajuste os parâmetros (Long, String) de acordo com o construtor da sua model EmpresaJunior
+                EmpresaJunior ej = new EmpresaJunior(rs.getLong("id"), rs.getString("nome"), rs.getString("cnpj"));
+                empresas.add(ej);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao listar empresas juniores: " + e.getMessage());
+        }
+        return empresas;
+    }
+
+    public List<EmpresaJunior> buscarPorNome(String nome) {
+        List<EmpresaJunior> empresas = new ArrayList<>();
+        String sql = "SELECT * FROM empresa_junior WHERE nome LIKE ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, "%" + nome + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    EmpresaJunior ej = new EmpresaJunior(rs.getLong("id"), rs.getString("nome"), rs.getString("cnpj"));
+                    empresas.add(ej);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar empresa por nome: " + e.getMessage());
+        }
+        return empresas;
     }
 }
