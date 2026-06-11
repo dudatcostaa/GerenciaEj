@@ -1,23 +1,22 @@
 package view;
 
-import controller.UsuarioController;
+import controller.BibliotecaController;
 import controller.KambanController;
 import controller.LeadController;
 import controller.SolicitacaoController;
-import controller.BibliotecaController;
-import model.Cargo;
-import model.EmpresaJunior;
-import model.Usuario;
-import model.Projeto;
-import model.SolicitacaoEJ;
-import model.StatusProjeto;
-import model.Arquivo;
-import model.BibliotecaService;
-
+import controller.UsuarioController;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import model.Arquivo;
+import model.BibliotecaService;
+import model.Cargo;
+import model.EmpresaJunior;
+import model.Projeto;
+import model.SolicitacaoEJ;
+import model.StatusProjeto;
+import model.Usuario;
 
 public class UsuarioView {
     private UsuarioController controller = new UsuarioController();
@@ -125,6 +124,7 @@ public class UsuarioView {
             System.out.println("2. Acessar Biblioteca");
             System.out.println("3. Acessar Módulo de Leads"); // NOVO
             System.out.println("4. Painel Administrativo (Aprovar EJs)"); // NOVO
+            System.out.println("5. Buscar Empresas Juniores");
             System.out.println("0. Fazer Logout");
             System.out.print("Escolha uma opção: ");
 
@@ -146,6 +146,9 @@ public class UsuarioView {
                 leadController.iniciarModulo();
             } else if (entrada.equals("4")) { // NOVO
                 executarModuloAdmin();
+            } else if (entrada.equals("5")) { // <--- ADICIONE ESTE BLOCO
+                EmpresaJuniorView ejView = new EmpresaJuniorView();
+                ejView.exibirMenuBusca();
             } else if (entrada.equals("0")) {
                 System.out.println("Efetuando logout... Voltando à tela inicial.");
                 break;
@@ -194,5 +197,3 @@ public class UsuarioView {
         }
     }
 }
-
-// alterando p tentar commitar novamente
