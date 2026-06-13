@@ -5,7 +5,6 @@ import controller.KambanController;
 import controller.LeadController;
 import controller.SolicitacaoController;
 import controller.UsuarioController;
-import view.ProjetoView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -129,6 +128,7 @@ public class UsuarioView {
             if (usuarioLogado.getCargo() == Cargo.DIRETOR) {
                 System.out.println("6. Gerenciar Projetos");
             }
+            System.out.println("7. Métricas de Desempenho");
             System.out.println("0. Fazer Logout");
             System.out.print("Escolha uma opção: ");
 
@@ -160,6 +160,9 @@ public class UsuarioView {
                 } else {
                     System.out.println("[ERRO] Acesso negado. Apenas DIRETORES podem gerenciar projetos.");
                 }
+            } else if (entrada.equals("7")) {
+                MetricasView metricasView = new MetricasView(leitor, usuarioLogado);
+                metricasView.iniciar();
             } else if (entrada.equals("0")) {
                 System.out.println("Efetuando logout... Voltando à tela inicial.");
                 break;
