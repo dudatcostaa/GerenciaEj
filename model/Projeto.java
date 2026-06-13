@@ -8,6 +8,7 @@ public class Projeto {
     private Date dataInicio;
     private StatusProjeto status;
     private QuadroKamban quadro;
+    private double valor;
 
     // construtor
     public Projeto(Long id, String nome, String descricao, StatusProjeto status) {
@@ -17,6 +18,7 @@ public class Projeto {
         this.dataInicio = new Date();
         this.status = status;
         this.quadro = null;
+        this.valor = 0.0;
     }
 
     // getters e setters
@@ -66,6 +68,14 @@ public class Projeto {
 
     public void setQuadro(QuadroKamban quadro) {
         this.quadro = quadro;
+    }
+
+    public double getValor() {
+        return valor;
+    }
+
+    public void setValor(double valor) {
+        this.valor = valor;
     }
 
     @Override

@@ -5,6 +5,7 @@ import controller.KambanController;
 import controller.LeadController;
 import controller.SolicitacaoController;
 import controller.UsuarioController;
+import view.ProjetoView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -122,9 +123,12 @@ public class UsuarioView {
             System.out.println("========================================");
             System.out.println("1. Acessar Quadros Kanban");
             System.out.println("2. Acessar Biblioteca");
-            System.out.println("3. Acessar Módulo de Leads"); // NOVO
-            System.out.println("4. Painel Administrativo (Aprovar EJs)"); // NOVO
+            System.out.println("3. Acessar Módulo de Leads");
+            System.out.println("4. Painel Administrativo (Aprovar EJs)");
             System.out.println("5. Buscar Empresas Juniores");
+            if (usuarioLogado.getCargo() == Cargo.DIRETOR) {
+                System.out.println("6. Gerenciar Projetos");
+            }
             System.out.println("0. Fazer Logout");
             System.out.print("Escolha uma opção: ");
 
@@ -140,15 +144,22 @@ public class UsuarioView {
                         biblioService, bView, usuarioLogado,
                         controller.getUsuariosDoSistema(), idsAtivos);
                 bController.iniciar();
-            } else if (entrada.equals("3")) { // NOVO
+            } else if (entrada.equals("3")) {
                 LeadView leadView = new LeadView();
                 LeadController leadController = new LeadController(leadView);
                 leadController.iniciarModulo();
-            } else if (entrada.equals("4")) { // NOVO
+            } else if (entrada.equals("4")) {
                 executarModuloAdmin();
-            } else if (entrada.equals("5")) { // <--- ADICIONE ESTE BLOCO
+            } else if (entrada.equals("5")) {
                 EmpresaJuniorView ejView = new EmpresaJuniorView();
                 ejView.exibirMenuBusca();
+            } else if (entrada.equals("6")) {
+                if (usuarioLogado.getCargo() == Cargo.DIRETOR) {
+                    ProjetoView projetoView = new ProjetoView(leitor);
+                    projetoView.iniciar();
+                } else {
+                    System.out.println("[ERRO] Acesso negado. Apenas DIRETORES podem gerenciar projetos.");
+                }
             } else if (entrada.equals("0")) {
                 System.out.println("Efetuando logout... Voltando à tela inicial.");
                 break;
