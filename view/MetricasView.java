@@ -6,6 +6,7 @@ import controller.PropostaController;
 import model.Gasto;
 import model.Proposta;
 import model.Usuario;
+import view.RelatorioView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -45,6 +46,7 @@ public class MetricasView {
             System.out.println("5. Leads");
             System.out.println("6. Gastos mensais");
             System.out.println("7. Propostas");
+            System.out.println("8. Gerar relatório semanal");
             System.out.println("0. Voltar");
             System.out.print("Escolha uma opção: ");
 
@@ -58,6 +60,9 @@ public class MetricasView {
                 case "5": exibirLeads();          break;
                 case "6": menuGastos();           break;
                 case "7": menuPropostas();        break;
+                case "8":
+                    new RelatorioView(scanner, usuarioLogado).iniciar();
+                    break;
                 case "0": rodando = false;        break;
                 default:
                     System.out.println("[ERRO] Opção inválida.");
