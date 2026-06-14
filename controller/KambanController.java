@@ -5,7 +5,6 @@ import model.Projeto;
 import dao.ProjetoDAO;
 import model.QuadroKamban;
 import dao.QuadroKambanDAO;
-import model.StatusTarefa;
 import model.Tarefa;
 import dao.TarefaDAO;
 import view.KambanView;
@@ -76,7 +75,7 @@ public class KambanController {
                     quadroDAO.atualizarContador(q);
                 }
             } else if (opcao == 2) {
-                // move tarefa entre colunas e salva no banco
+                // move tarefa entre colunas (padrão State) e salva no banco
                 long id = view.pedirIdTarefa();
                 Tarefa tarefa = q.getTarefas().stream()
                         .filter(t -> t.getId() == id)
@@ -84,14 +83,22 @@ public class KambanController {
                         .orElse(null);
 
                 if (tarefa != null) {
-                    int novoStatus = view.pedirNovoStatus();
-                    if (novoStatus >= 0 && novoStatus <= 3) {
-                        StatusTarefa status = StatusTarefa.values()[novoStatus];
-                        tarefa.setStatus(status);
-                        tarefaDAO.atualizarStatus(tarefa.getId(), status);
+                    int direcao = view.pedirDirecaoMovimento();
+                    String resultado;
+
+                    if (direcao == 1) {
+                        resultado = tarefa.avancar();
+                    } else if (direcao == 2) {
+                        resultado = tarefa.voltar();
                     } else {
-                        view.mostrarMensagem("Status inválido.");
+                        view.mostrarMensagem("Opção inválida.");
+                        continue;
                     }
+
+                    view.mostrarMensagem(resultado);
+                    // persiste o status atual (pode não ter mudado, se a tarefa
+                    // já estava na primeira ou última coluna)
+                    tarefaDAO.atualizarStatus(tarefa.getId(), tarefa.getStatus());
                 } else {
                     view.mostrarMensagem("Tarefa não encontrada.");
                 }
