@@ -43,7 +43,7 @@ public class KambanView {
     public int mostrarMenuKamban(String titulo) {
         System.out.println("\n--- " + titulo + " ---");
         System.out.println("1. Adicionar Tarefa");
-        System.out.println("2. Mover Tarefa");
+        System.out.println("2. Mover Tarefa (avançar/voltar)");
         System.out.println("0. Voltar");
         System.out.print("Escolha: ");
         return lerInteiro();
@@ -60,10 +60,10 @@ public class KambanView {
         return lerInteiro();
     }
 
-    // pede o novo status da tarefa e retorna o índice correspondente no enum
-    public int pedirNovoStatus() {
-        System.out.println("Para qual status? 1.PENDENTE 2.PROGRESSO 3.REVISÃO 4.PRONTO");
-        return lerInteiro() - 1;  // diminui um para pegar o índice certo
+    // pergunta se a tarefa deve avançar ou voltar no fluxo do quadro (padrão State)
+    public int pedirDirecaoMovimento() {
+        System.out.println("Mover tarefa para: 1.Avançar  2.Voltar");
+        return lerInteiro();
     }
 
     // exibe os dados e as tarefas do kamban, usando as cores definidas no requisito nao funcional e no enum 
