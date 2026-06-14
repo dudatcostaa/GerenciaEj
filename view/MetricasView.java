@@ -6,7 +6,6 @@ import controller.PropostaController;
 import model.Gasto;
 import model.Proposta;
 import model.Usuario;
-import view.RelatorioView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
