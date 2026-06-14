@@ -18,7 +18,6 @@ public class RelatorioController {
 
     private RelatorioDAO dao;
     private static final SimpleDateFormat SDF      = new SimpleDateFormat("dd/MM/yyyy");
-    private static final SimpleDateFormat SDF_FILE = new SimpleDateFormat("yyyy-MM-dd");
 
     public RelatorioController() {
         this.dao = new RelatorioDAO();
