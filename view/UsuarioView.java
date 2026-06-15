@@ -1,9 +1,9 @@
 package view;
 
 import controller.BibliotecaController;
+import controller.FuncionalidadeController;
 import controller.KambanController;
 import controller.LeadController;
-import controller.SolicitacaoController;
 import controller.UsuarioController;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,9 +12,8 @@ import java.util.Scanner;
 import model.Arquivo;
 import model.BibliotecaService;
 import model.Cargo;
-import model.EmpresaJunior;
+import model.Funcionalidade;
 import model.Projeto;
-import model.SolicitacaoEJ;
 import model.StatusProjeto;
 import model.Usuario;
 
@@ -116,8 +115,107 @@ public class UsuarioView {
         }
     }
 
+    private void executarFluxoExclusao() {
+        System.out.print("\nTem certeza que deseja excluir uma conta? (Sim/Não): ");
+        String confirmacao = leitor.nextLine();
+
+        if (confirmacao.equalsIgnoreCase("Sim") || confirmacao.equalsIgnoreCase("S")) {
+            System.out.print("Confirme o E-mail da conta a ser excluída: ");
+            String emailConfirmar = leitor.nextLine();
+            System.out.print("Confirme a Senha da conta: ");
+            String senhaConfirmar = leitor.nextLine();
+
+            boolean sucesso = controller.excluirUsuario(emailConfirmar, senhaConfirmar);
+
+            if (sucesso) {
+                System.out.println("\n[SUCESSO] Conta excluída com sucesso!");
+            } else {
+                System.out.println("\n[ERRO] Credenciais incorretas.");
+            }
+        } else {
+            System.out.println("Exclusão cancelada.");
+        }
+    }
+
     private void exibirMenuInternoEJ(Usuario usuarioLogado) {
+        FuncionalidadeController funcController = new FuncionalidadeController();
+
         while (true) {
+            // RN02 — só aparecem no menu as funcionalidades que o usuário selecionou
+            List<Funcionalidade> selecionadas = funcController.listarSelecionadas(usuarioLogado.getId());
+
+            List<String> labels = new ArrayList<>();
+            List<Runnable> acoes = new ArrayList<>();
+
+            if (selecionadas.contains(Funcionalidade.KANBAN)) {
+                labels.add("Acessar Quadros Kanban");
+                acoes.add(() -> {
+                    KambanView kView = new KambanView(leitor);
+                    KambanController kController = new KambanController(kView);
+                    kController.iniciar();
+                });
+            }
+
+            if (selecionadas.contains(Funcionalidade.BIBLIOTECA)) {
+                labels.add("Acessar Biblioteca");
+                acoes.add(() -> {
+                    BibliotecaView bView = new BibliotecaView();
+                    BibliotecaController bController = new BibliotecaController(
+                            biblioService, bView, usuarioLogado,
+                            controller.getUsuariosDoSistema(), idsAtivos);
+                    bController.iniciar();
+                });
+            }
+
+            if (selecionadas.contains(Funcionalidade.LEADS)) {
+                labels.add("Acessar Módulo de Leads");
+                acoes.add(() -> {
+                    LeadView leadView = new LeadView();
+                    LeadController leadController = new LeadController(leadView);
+                    leadController.iniciarModulo();
+                });
+            }
+
+            if (selecionadas.contains(Funcionalidade.BUSCAR_EJ)) {
+                labels.add("Buscar Empresas Juniores");
+                acoes.add(() -> {
+                    EmpresaJuniorView ejView = new EmpresaJuniorView();
+                    ejView.exibirMenuBusca(usuarioLogado);
+                });
+            }
+
+            if (selecionadas.contains(Funcionalidade.METRICAS)) {
+                labels.add("Métricas de Desempenho");
+                acoes.add(() -> {
+                    MetricasView metricasView = new MetricasView(leitor, usuarioLogado);
+                    metricasView.iniciar();
+                });
+            }
+
+            if (selecionadas.contains(Funcionalidade.RELATORIO)) {
+                labels.add("Gerar Relatório Semanal");
+                acoes.add(() -> {
+                    RelatorioView relatorioView = new RelatorioView(leitor, usuarioLogado);
+                    relatorioView.iniciar();
+                });
+            }
+
+            if (selecionadas.contains(Funcionalidade.PROJETOS) && usuarioLogado.getCargo() == Cargo.DIRETOR) {
+                labels.add("Gerenciar Projetos");
+                acoes.add(() -> {
+                    ProjetoView projetoView = new ProjetoView(leitor);
+                    projetoView.iniciar();
+                });
+            }
+
+            // UC10 — configuração das ferramentas de trabalho, sempre disponível
+            labels.add("Configurar Ferramentas de Trabalho");
+            acoes.add(() -> {
+                FuncionalidadeView funcView = new FuncionalidadeView(leitor, usuarioLogado);
+                funcView.iniciar();
+            });
+
+            // exibição do menu
             System.out.println("\n========================================");
             System.out.println("      GERENCIA EJ - MENU INTERNO        ");
             System.out.println("========================================");
@@ -127,6 +225,9 @@ public class UsuarioView {
             System.out.println("4. Painel Administrativo (Aprovar EJs)"); // NOVO
             System.out.println("5. Buscar Empresas Juniores");
             System.out.println("6. Painel do Diretor (Notificações de Ingresso)");
+            for (int i = 0; i < labels.size(); i++) {
+                System.out.println((i + 1) + ". " + labels.get(i));
+            }
             System.out.println("0. Fazer Logout");
             System.out.print("Escolha uma opção: ");
 
@@ -153,56 +254,25 @@ public class UsuarioView {
                 ejView.exibirMenuBusca(usuarioLogado);
             } else if (entrada.equals("6")) {
                 if (usuarioLogado.getCargo() == model.Cargo.DIRETOR) {
-                    executarPainelDiretor(usuarioLogado); // <--- ADICIONE O PARAMETRO AQUI
+                    executarPainelDiretor(usuarioLogado); 
                 } else {
-                    System.out.println(
-                            "\n[ERRO] Acesso negado! Apenas usuários com cargo de DIRETOR podem acessar este painel. (RN01)");
+            System.out.println("\n[ERRO] Acesso negado! Apenas usuários com cargo de DIRETOR podem acessar...");
+        }
+    } else if (entrada.equals("0")) { // <--- DEIXE APENAS ESSA LINHA, APAGUE A OUTRA REPETIDA
+        System.out.println("Efetuando logout... Voltando à tela inicial.");
+        break;
+    }
+
+            try {
+                int escolha = Integer.parseInt(entrada.trim());
+                if (escolha >= 1 && escolha <= acoes.size()) {
+                    acoes.get(escolha - 1).run();
+                } else {
+                    System.out.println("[ERRO] Opção inválida!");
                 }
-            } else if (entrada.equals("0")) {
-                System.out.println("Efetuando logout... Voltando à tela inicial.");
-                break;
-            } else {
+            } catch (NumberFormatException e) {
                 System.out.println("[ERRO] Opção inválida!");
             }
-        }
-    }
-
-    // NOVO — copiado da Main2, mas como método privado da view
-    private void executarModuloAdmin() {
-        System.out.println("\n=== Iniciando Módulo Administrativo ===");
-
-        // Dados de teste mockados (igual ao que estava na Main2)
-        Usuario usuarioTeste = new Usuario(1L, "Lorena", "lorena@ufsc.br", "senha123", Cargo.MEMBRO);
-        EmpresaJunior ejTeste = new EmpresaJunior(101L, "Tech Solutions EJ", "12.345.678/0001-99");
-        SolicitacaoEJ solicitacao = new SolicitacaoEJ(501L, "estatuto_tech.pdf", usuarioTeste, ejTeste);
-
-        AdminView adminView = new AdminView();
-        SolicitacaoController solController = new SolicitacaoController(adminView);
-        solController.avaliarSolicitacao(solicitacao);
-
-        System.out.println("\n[Módulo Administrativo finalizado. Pressione ENTER para continuar]");
-        leitor.nextLine();
-    }
-
-    private void executarFluxoExclusao() {
-        System.out.print("\nTem certeza que deseja excluir uma conta? (Sim/Não): ");
-        String confirmacao = leitor.nextLine();
-
-        if (confirmacao.equalsIgnoreCase("Sim") || confirmacao.equalsIgnoreCase("S")) {
-            System.out.print("Confirme o E-mail da conta a ser excluída: ");
-            String emailConfirmar = leitor.nextLine();
-            System.out.print("Confirme a Senha da conta: ");
-            String senhaConfirmar = leitor.nextLine();
-
-            boolean sucesso = controller.excluirUsuario(emailConfirmar, senhaConfirmar);
-
-            if (sucesso) {
-                System.out.println("\n[SUCESSO] Conta excluída com sucesso!");
-            } else {
-                System.out.println("\n[ERRO] Credenciais incorretas.");
-            }
-        } else {
-            System.out.println("Exclusão cancelada.");
         }
     }
 
@@ -247,4 +317,8 @@ public class UsuarioView {
             }
         }
     }
+    private void executarModuloAdmin() {
+    System.out.println("\n[INFO] Painel Administrativo (desenvolvido pelas meninas).");
 }
+}              
+
