@@ -36,4 +36,8 @@ public class CandidaturaController {
     public boolean processarSaidaEmpresa(Long usuarioId) {
         return candidaturaDAO.sairDaEmpresaJunior(usuarioId);
     }
+
+    public boolean temVinculoAprovado(Long usuarioId) {
+        return candidaturaDAO.temVinculoAprovado(usuarioId);
+    }
 }
