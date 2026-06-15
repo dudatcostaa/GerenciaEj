@@ -225,6 +225,7 @@ public class UsuarioView {
             System.out.println("4. Painel Administrativo (Aprovar EJs)"); // NOVO
             System.out.println("5. Buscar Empresas Juniores");
             System.out.println("6. Painel do Diretor (Notificações de Ingresso)");
+            System.out.println("7. Sair da Empresa Júnior");
             for (int i = 0; i < labels.size(); i++) {
                 System.out.println((i + 1) + ". " + labels.get(i));
             }
@@ -237,31 +238,38 @@ public class UsuarioView {
                 KambanView kView = new KambanView(leitor);
                 KambanController kController = new KambanController(kView);
                 kController.iniciar();
+
             } else if (entrada.equals("2")) {
                 BibliotecaView bView = new BibliotecaView();
                 BibliotecaController bController = new BibliotecaController(
                         biblioService, bView, usuarioLogado,
                         controller.getUsuariosDoSistema(), idsAtivos);
                 bController.iniciar();
+
             } else if (entrada.equals("3")) { // NOVO
                 LeadView leadView = new LeadView();
                 LeadController leadController = new LeadController(leadView);
                 leadController.iniciarModulo();
-            } else if (entrada.equals("4")) { // NOVO
+
+            } else if (entrada.equals("4")) {
                 executarModuloAdmin();
+
             } else if (entrada.equals("5")) {
                 EmpresaJuniorView ejView = new EmpresaJuniorView();
                 ejView.exibirMenuBusca(usuarioLogado);
+
             } else if (entrada.equals("6")) {
                 if (usuarioLogado.getCargo() == model.Cargo.DIRETOR) {
-                    executarPainelDiretor(usuarioLogado); 
+                    executarPainelDiretor(usuarioLogado);
                 } else {
-            System.out.println("\n[ERRO] Acesso negado! Apenas usuários com cargo de DIRETOR podem acessar...");
-        }
-    } else if (entrada.equals("0")) { // <--- DEIXE APENAS ESSA LINHA, APAGUE A OUTRA REPETIDA
-        System.out.println("Efetuando logout... Voltando à tela inicial.");
-        break;
-    }
+                    System.out.println("\n[ERRO] Acesso negado!");
+                }
+            } else if (entrada.equals("7")) { // <--- ADICIONE ESTE BLOCO INTERO
+                executarFluxoSaidaEmpresa(usuarioLogado);
+            } else if (entrada.equals("0")) {
+                System.out.println("Efetuando logout... Voltando à tela inicial.");
+                break;
+            }
 
             try {
                 int escolha = Integer.parseInt(entrada.trim());
@@ -317,8 +325,30 @@ public class UsuarioView {
             }
         }
     }
-    private void executarModuloAdmin() {
-    System.out.println("\n[INFO] Painel Administrativo (desenvolvido pelas meninas).");
-}
-}              
 
+    private void executarModuloAdmin() {
+        System.out.println("\n[INFO] Painel Administrativo (desenvolvido pelas meninas).");
+    }
+
+    private void executarFluxoSaidaEmpresa(Usuario usuarioLogado) {
+    System.out.println("\n========================================");
+    System.out.println("        DESVINCULAR DE EMPRESA JÚNIOR   ");
+    System.out.println("========================================");
+    System.out.print("Tem certeza absoluta que deseja sair da sua Empresa Júnior atual? (S/N): ");
+    
+    String confirmacao = leitor.nextLine().trim().toUpperCase();
+
+    if (confirmacao.equals("S")) {
+        boolean sucesso = candController.processarSaidaEmpresa(usuarioLogado.getId());
+
+        if (sucesso) {
+            System.out.println("\n[SUCESSO] Você se desligou da Empresa Júnior com sucesso! Seu vínculo agora está INATIVO. (RF05)");
+            System.out.println("[INFO] Você está livre para solicitar ingresso em outras empresas. (RN06)");
+        } else {
+            System.out.println("\n[AVISO] Não foi possível concluir a ação. Você não possui nenhum vínculo ativo ('APROVADO') no sistema.");
+        }
+    } else {
+        System.out.println("\nOperação cancelada. Você continua vinculado à sua Empresa Júnior.");
+    }
+}
+}

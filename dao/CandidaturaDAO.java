@@ -85,4 +85,21 @@ public class CandidaturaDAO {
             throw new RuntimeException("Erro ao responder solicitação: " + e.getMessage());
         }
     }
+
+    // Atende ao RF05 e libera a RN06: Muda o vínculo ativo para INATIVO
+    public boolean sairDaEmpresaJunior(Long usuarioId) {
+        String sql = "UPDATE candidatura_ej SET status = 'INATIVO' WHERE usuario_id = ? AND status = 'APROVADO'";
+        
+        try {
+            Connection conn = DatabaseConnection.getInstance().getConnection();
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setLong(1, usuarioId);
+                int linhasAfetadas = stmt.executeUpdate();
+                
+                return linhasAfetadas > 0; // Retorna true se o usuário realmente tinha um vínculo ativo e saiu
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao se desligar da empresa júnior: " + e.getMessage());
+        }
+    }
 }

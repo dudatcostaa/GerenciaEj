@@ -32,4 +32,8 @@ public class CandidaturaController {
         String novoStatus = aprovada ? "APROVADO" : "RECUSADO";
         candidaturaDAO.atualizarStatusCandidatura(candidaturaId, novoStatus);
     }
+
+    public boolean processarSaidaEmpresa(Long usuarioId) {
+        return candidaturaDAO.sairDaEmpresaJunior(usuarioId);
+    }
 }
