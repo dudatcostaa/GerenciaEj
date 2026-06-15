@@ -7,7 +7,8 @@ public enum Funcionalidade {
     BUSCAR_EJ("Buscar Empresas Juniores"),
     METRICAS("Métricas de Desempenho"),
     RELATORIO("Gerar Relatório Semanal"),
-    PROJETOS("Gerenciar Projetos");
+    PROJETOS("Gerenciar Projetos"),
+    AGENDA("Acessar Agenda e Eventos");
 
     private final String descricao;
 

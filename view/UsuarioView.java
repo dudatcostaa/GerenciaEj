@@ -236,7 +236,15 @@ public class UsuarioView {
                 });
             }
 
-            if (emEj && selecionadas.contains(Funcionalidade.PROJETOS) && usuarioLogado.getCargo() == Cargo.DIRETOR) {
+            if (selecionadas.contains(Funcionalidade.AGENDA)) {
+                labels.add("Acessar Agenda e Eventos");
+                acoes.add(() -> {
+                    EventoView eventoView = new EventoView(leitor, usuarioLogado);
+                    eventoView.iniciar();
+                });
+            }
+
+            if (selecionadas.contains(Funcionalidade.PROJETOS) && usuarioLogado.getCargo() == Cargo.DIRETOR) {
                 labels.add("Gerenciar Projetos");
                 acoes.add(() -> {
                     ProjetoView projetoView = new ProjetoView(leitor);
