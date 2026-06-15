@@ -177,6 +177,14 @@ public class UsuarioView {
                 });
             }
 
+            if (selecionadas.contains(Funcionalidade.AGENDA)) {
+                labels.add("Acessar Agenda e Eventos");
+                acoes.add(() -> {
+                    EventoView eventoView = new EventoView(leitor, usuarioLogado);
+                    eventoView.iniciar();
+                });
+            }
+
             if (selecionadas.contains(Funcionalidade.PROJETOS) && usuarioLogado.getCargo() == Cargo.DIRETOR) {
                 labels.add("Gerenciar Projetos");
                 acoes.add(() -> {
@@ -243,4 +251,4 @@ public class UsuarioView {
             System.out.println("Exclusão cancelada.");
         }
     }
-}                    
+}
