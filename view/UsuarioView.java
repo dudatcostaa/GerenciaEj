@@ -26,6 +26,7 @@ public class UsuarioView {
     private List<Projeto> mockProjetos = new ArrayList<>();
     private BibliotecaService biblioService = new BibliotecaService();
     private List<Long> idsAtivos = Arrays.asList(1L, 2L, 3L);
+    private controller.CandidaturaController candController = new controller.CandidaturaController();
 
     public UsuarioView() {
         // Inicializa dados do kamban que estavam na Main da sua amiga
@@ -125,6 +126,7 @@ public class UsuarioView {
             System.out.println("3. Acessar Módulo de Leads"); // NOVO
             System.out.println("4. Painel Administrativo (Aprovar EJs)"); // NOVO
             System.out.println("5. Buscar Empresas Juniores");
+            System.out.println("6. Painel do Diretor (Notificações de Ingresso)");
             System.out.println("0. Fazer Logout");
             System.out.print("Escolha uma opção: ");
 
@@ -146,9 +148,16 @@ public class UsuarioView {
                 leadController.iniciarModulo();
             } else if (entrada.equals("4")) { // NOVO
                 executarModuloAdmin();
-            } else if (entrada.equals("5")) { // <--- ADICIONE ESTE BLOCO
+            } else if (entrada.equals("5")) {
                 EmpresaJuniorView ejView = new EmpresaJuniorView();
-                ejView.exibirMenuBusca();
+                ejView.exibirMenuBusca(usuarioLogado);
+            } else if (entrada.equals("6")) {
+                if (usuarioLogado.getCargo() == model.Cargo.DIRETOR) {
+                    executarPainelDiretor(usuarioLogado); // <--- ADICIONE O PARAMETRO AQUI
+                } else {
+                    System.out.println(
+                            "\n[ERRO] Acesso negado! Apenas usuários com cargo de DIRETOR podem acessar este painel. (RN01)");
+                }
             } else if (entrada.equals("0")) {
                 System.out.println("Efetuando logout... Voltando à tela inicial.");
                 break;
@@ -194,6 +203,48 @@ public class UsuarioView {
             }
         } else {
             System.out.println("Exclusão cancelada.");
+        }
+    }
+
+    private void executarPainelDiretor(Usuario usuarioLogado) { // <--- RECEBE O PARAMETRO
+        System.out.println("\n========================================");
+        System.out.println("     PAINEL DO DIRETOR - NOTIFICAÇÕES   ");
+        System.out.println("========================================");
+
+        // Passa o ID do diretor para a busca filtrada
+        List<String> pendentes = candController.obterNotificacoesPendentes(usuarioLogado.getId());
+
+        if (pendentes.isEmpty()) {
+            System.out.println("Não há nenhuma solicitação de ingresso pendente de outros usuários no momento.");
+            return;
+        }
+
+        // ... resto do seu código igualzinho ...
+
+        System.out.println("Solicitações aguardando sua decisão:");
+        for (String solicitacao : pendentes) {
+            System.out.println(solicitacao);
+        }
+
+        System.out.println("----------------------------------------");
+        System.out.print("Digite o ID da solicitação que deseja avaliar (ou 0 para voltar): ");
+        long idEscolhido = leitor.nextLong();
+        leitor.nextLine(); // Limpa buffer
+
+        if (idEscolhido != 0) {
+            System.out.print("Deseja [1] APROVAR ou [2] RECUSAR? ");
+            int decisao = leitor.nextInt();
+            leitor.nextLine(); // Limpa buffer
+
+            if (decisao == 1) {
+                candController.responderSolicitacao(idEscolhido, true);
+                System.out.println("\n[SUCESSO] Candidatura aprovada com sucesso!");
+            } else if (decisao == 2) {
+                candController.responderSolicitacao(idEscolhido, false);
+                System.out.println("\n[AVISO] Candidatura recusada.");
+            } else {
+                System.out.println("\n[ERRO] Opção inválida.");
+            }
         }
     }
 }
