@@ -102,4 +102,23 @@ public class CandidaturaDAO {
             throw new RuntimeException("Erro ao se desligar da empresa júnior: " + e.getMessage());
         }
     }
+    // Verifica se o usuário possui um vínculo atualmente ativo/aprovado em alguma EJ (RNF03)
+    public boolean temVinculoAprovado(Long usuarioId) {
+        String sql = "SELECT COUNT(*) FROM candidatura_ej WHERE usuario_id = ? AND status = 'APROVADO'";
+        
+        try {
+            Connection conn = DatabaseConnection.getInstance().getConnection();
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setLong(1, usuarioId);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt(1) > 0;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao verificar vínculo do usuário: " + e.getMessage());
+        }
+        return false;
+    }
 }

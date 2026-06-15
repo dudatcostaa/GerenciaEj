@@ -141,22 +141,36 @@ public class UsuarioView {
         FuncionalidadeController funcController = new FuncionalidadeController();
 
         while (true) {
-            // RN02 — só aparecem no menu as funcionalidades que o usuário selecionou
-            List<Funcionalidade> selecionadas = funcController.listarSelecionadas(usuarioLogado.getId());
+            // RNF03 — Checa dinamicamente se o usuário possui vínculo ATIVO ('APROVADO') no
+            // banco
+            boolean emEj = candController.temVinculoAprovado(usuarioLogado.getId());
+
+            // Captura as funcionalidades configuradas tratando o erro de tabela inexistente
+            // de forma limpa
+            List<Funcionalidade> selecionadas = new ArrayList<>();
+            try {
+                selecionadas = funcController.listarSelecionadas(usuarioLogado.getId());
+            } catch (Exception e) {
+                // Silencia o erro para não quebrar o visual do terminal enquanto as meninas não
+                // criam a tabela
+            }
 
             List<String> labels = new ArrayList<>();
             List<Runnable> acoes = new ArrayList<>();
 
-            if (selecionadas.contains(Funcionalidade.KANBAN)) {
+            // ========================================================
+            // 1. MONTANDO AS OPÇÕES DO MENU DINAMICAMENTE (RNF03)
+            // ========================================================
+
+            // Módulos base da EJ: Só aparecem para quem já está APROVADO em uma EJ
+            if (emEj) {
                 labels.add("Acessar Quadros Kanban");
                 acoes.add(() -> {
                     KambanView kView = new KambanView(leitor);
                     KambanController kController = new KambanController(kView);
                     kController.iniciar();
                 });
-            }
 
-            if (selecionadas.contains(Funcionalidade.BIBLIOTECA)) {
                 labels.add("Acessar Biblioteca");
                 acoes.add(() -> {
                     BibliotecaView bView = new BibliotecaView();
@@ -165,9 +179,7 @@ public class UsuarioView {
                             controller.getUsuariosDoSistema(), idsAtivos);
                     bController.iniciar();
                 });
-            }
 
-            if (selecionadas.contains(Funcionalidade.LEADS)) {
                 labels.add("Acessar Módulo de Leads");
                 acoes.add(() -> {
                     LeadView leadView = new LeadView();
@@ -176,15 +188,39 @@ public class UsuarioView {
                 });
             }
 
-            if (selecionadas.contains(Funcionalidade.BUSCAR_EJ)) {
-                labels.add("Buscar Empresas Juniores");
+            // Painel Administrativo Geral
+            labels.add("Painel Administrativo (Aprovar EJs)");
+            acoes.add(() -> {
+                executarModuloAdmin();
+            });
+
+            // Buscar Empresas Juniores: Só aparece para quem NÃO está em uma EJ ainda
+            if (!emEj) {
+                labels.add("Buscar Empresas Juniores (Solicitar Ingresso)");
                 acoes.add(() -> {
                     EmpresaJuniorView ejView = new EmpresaJuniorView();
                     ejView.exibirMenuBusca(usuarioLogado);
                 });
             }
 
-            if (selecionadas.contains(Funcionalidade.METRICAS)) {
+            // Painel do Diretor: EXCLUSIVO para quem tem cargo de DIRETOR (RN01)
+            if (usuarioLogado.getCargo() == Cargo.DIRETOR) {
+                labels.add("Painel do Diretor (Notificações de Ingresso)");
+                acoes.add(() -> {
+                    executarPainelDiretor(usuarioLogado);
+                });
+            }
+
+            // Desvincular-se: Só aparece para quem tem vínculo ativo (UC05)
+            if (emEj) {
+                labels.add("Sair da Empresa Júnior");
+                acoes.add(() -> {
+                    executarFluxoSaidaEmpresa(usuarioLogado);
+                });
+            }
+
+            // Módulos customizados das meninas: Só aparecem se estiver em EJ e configurados
+            if (emEj && selecionadas.contains(Funcionalidade.METRICAS)) {
                 labels.add("Métricas de Desempenho");
                 acoes.add(() -> {
                     MetricasView metricasView = new MetricasView(leitor, usuarioLogado);
@@ -192,7 +228,7 @@ public class UsuarioView {
                 });
             }
 
-            if (selecionadas.contains(Funcionalidade.RELATORIO)) {
+            if (emEj && selecionadas.contains(Funcionalidade.RELATORIO)) {
                 labels.add("Gerar Relatório Semanal");
                 acoes.add(() -> {
                     RelatorioView relatorioView = new RelatorioView(leitor, usuarioLogado);
@@ -200,7 +236,7 @@ public class UsuarioView {
                 });
             }
 
-            if (selecionadas.contains(Funcionalidade.PROJETOS) && usuarioLogado.getCargo() == Cargo.DIRETOR) {
+            if (emEj && selecionadas.contains(Funcionalidade.PROJETOS) && usuarioLogado.getCargo() == Cargo.DIRETOR) {
                 labels.add("Gerenciar Projetos");
                 acoes.add(() -> {
                     ProjetoView projetoView = new ProjetoView(leitor);
@@ -208,96 +244,65 @@ public class UsuarioView {
                 });
             }
 
-            // UC10 — configuração das ferramentas de trabalho, sempre disponível
-            labels.add("Configurar Ferramentas de Trabalho");
-            acoes.add(() -> {
-                FuncionalidadeView funcView = new FuncionalidadeView(leitor, usuarioLogado);
-                funcView.iniciar();
-            });
+            // Configuração de ferramentas: Só disponível se já estiver em uma EJ (UC10 +
+            // RNF03)
+            if (emEj) {
+                labels.add("Configurar Ferramentas de Trabalho");
+                acoes.add(() -> {
+                    FuncionalidadeView funcView = new FuncionalidadeView(leitor, usuarioLogado);
+                    funcView.iniciar();
+                });
+            }
 
-            // exibição do menu
+            // ========================================================
+            // 2. RENDERIZAÇÃO DO MENU NO TERMINAL
+            // ========================================================
             System.out.println("\n========================================");
             System.out.println("      GERENCIA EJ - MENU INTERNO        ");
             System.out.println("========================================");
-            System.out.println("1. Acessar Quadros Kanban");
-            System.out.println("2. Acessar Biblioteca");
-            System.out.println("3. Acessar Módulo de Leads"); // NOVO
-            System.out.println("4. Painel Administrativo (Aprovar EJs)"); // NOVO
-            System.out.println("5. Buscar Empresas Juniores");
-            System.out.println("6. Painel do Diretor (Notificações de Ingresso)");
-            System.out.println("7. Sair da Empresa Júnior");
+
+            // Imprime as opções geradas sequencialmente (1, 2, 3...)
             for (int i = 0; i < labels.size(); i++) {
                 System.out.println((i + 1) + ". " + labels.get(i));
             }
             System.out.println("0. Fazer Logout");
             System.out.print("Escolha uma opção: ");
 
-            String entrada = leitor.nextLine();
+            String entrada = leitor.nextLine().trim();
 
-            if (entrada.equals("1")) {
-                KambanView kView = new KambanView(leitor);
-                KambanController kController = new KambanController(kView);
-                kController.iniciar();
-
-            } else if (entrada.equals("2")) {
-                BibliotecaView bView = new BibliotecaView();
-                BibliotecaController bController = new BibliotecaController(
-                        biblioService, bView, usuarioLogado,
-                        controller.getUsuariosDoSistema(), idsAtivos);
-                bController.iniciar();
-
-            } else if (entrada.equals("3")) { // NOVO
-                LeadView leadView = new LeadView();
-                LeadController leadController = new LeadController(leadView);
-                leadController.iniciarModulo();
-
-            } else if (entrada.equals("4")) {
-                executarModuloAdmin();
-
-            } else if (entrada.equals("5")) {
-                EmpresaJuniorView ejView = new EmpresaJuniorView();
-                ejView.exibirMenuBusca(usuarioLogado);
-
-            } else if (entrada.equals("6")) {
-                if (usuarioLogado.getCargo() == model.Cargo.DIRETOR) {
-                    executarPainelDiretor(usuarioLogado);
-                } else {
-                    System.out.println("\n[ERRO] Acesso negado!");
-                }
-            } else if (entrada.equals("7")) { // <--- ADICIONE ESTE BLOCO INTERO
-                executarFluxoSaidaEmpresa(usuarioLogado);
-            } else if (entrada.equals("0")) {
+            if (entrada.equals("0")) {
                 System.out.println("Efetuando logout... Voltando à tela inicial.");
                 break;
             }
 
+            // ========================================================
+            // 3. EXECUÇÃO DA AÇÃO SELECIONADA
+            // ========================================================
             try {
-                int escolha = Integer.parseInt(entrada.trim());
+                int escolha = Integer.parseInt(entrada);
                 if (escolha >= 1 && escolha <= acoes.size()) {
+                    // Roda a ação exata correspondente ao número digitado
                     acoes.get(escolha - 1).run();
                 } else {
-                    System.out.println("[ERRO] Opção inválida!");
+                    System.out.println("\n[ERRO] Opção inválida!");
                 }
             } catch (NumberFormatException e) {
-                System.out.println("[ERRO] Opção inválida!");
+                System.out.println("\n[ERRO] Digite um número válido!");
             }
         }
     }
 
-    private void executarPainelDiretor(Usuario usuarioLogado) { // <--- RECEBE O PARAMETRO
+    private void executarPainelDiretor(Usuario usuarioLogado) {
         System.out.println("\n========================================");
         System.out.println("     PAINEL DO DIRETOR - NOTIFICAÇÕES   ");
         System.out.println("========================================");
 
-        // Passa o ID do diretor para a busca filtrada
         List<String> pendentes = candController.obterNotificacoesPendentes(usuarioLogado.getId());
 
         if (pendentes.isEmpty()) {
             System.out.println("Não há nenhuma solicitação de ingresso pendente de outros usuários no momento.");
             return;
         }
-
-        // ... resto do seu código igualzinho ...
 
         System.out.println("Solicitações aguardando sua decisão:");
         for (String solicitacao : pendentes) {
@@ -306,11 +311,20 @@ public class UsuarioView {
 
         System.out.println("----------------------------------------");
         System.out.print("Digite o ID da solicitação que deseja avaliar (ou 0 para voltar): ");
+
+        while (!leitor.hasNextLong()) {
+            System.out.println("[ERRO] Digite um número válido!");
+            leitor.next();
+        }
         long idEscolhido = leitor.nextLong();
         leitor.nextLine(); // Limpa buffer
 
         if (idEscolhido != 0) {
             System.out.print("Deseja [1] APROVAR ou [2] RECUSAR? ");
+            while (!leitor.hasNextInt()) {
+                System.out.println("[ERRO] Digite 1 ou 2!");
+                leitor.next();
+            }
             int decisao = leitor.nextInt();
             leitor.nextLine(); // Limpa buffer
 
@@ -331,24 +345,26 @@ public class UsuarioView {
     }
 
     private void executarFluxoSaidaEmpresa(Usuario usuarioLogado) {
-    System.out.println("\n========================================");
-    System.out.println("        DESVINCULAR DE EMPRESA JÚNIOR   ");
-    System.out.println("========================================");
-    System.out.print("Tem certeza absoluta que deseja sair da sua Empresa Júnior atual? (S/N): ");
-    
-    String confirmacao = leitor.nextLine().trim().toUpperCase();
+        System.out.println("\n========================================");
+        System.out.println("        DESVINCULAR DE EMPRESA JÚNIOR   ");
+        System.out.println("========================================");
+        System.out.print("Tem certeza absoluta que deseja sair da sua Empresa Júnior atual? (S/N): ");
 
-    if (confirmacao.equals("S")) {
-        boolean sucesso = candController.processarSaidaEmpresa(usuarioLogado.getId());
+        String confirmacao = leitor.nextLine().trim().toUpperCase();
 
-        if (sucesso) {
-            System.out.println("\n[SUCESSO] Você se desligou da Empresa Júnior com sucesso! Seu vínculo agora está INATIVO. (RF05)");
-            System.out.println("[INFO] Você está livre para solicitar ingresso em outras empresas. (RN06)");
+        if (confirmacao.equals("S")) {
+            boolean sucesso = candController.processarSaidaEmpresa(usuarioLogado.getId());
+
+            if (sucesso) {
+                System.out.println(
+                        "\n[SUCESSO] Você se desligou da Empresa Júnior com sucesso! Seu vínculo agora está INATIVO. (RF05)");
+                System.out.println("[INFO] Você está livre para solicitar ingresso em outras empresas. (RN06)");
+            } else {
+                System.out.println(
+                        "\n[AVISO] Não foi possível concluir a ação. Você não possui nenhum vínculo ativo ('APROVADO') no sistema.");
+            }
         } else {
-            System.out.println("\n[AVISO] Não foi possível concluir a ação. Você não possui nenhum vínculo ativo ('APROVADO') no sistema.");
+            System.out.println("\nOperação cancelada. Você continua vinculado à sua Empresa Júnior.");
         }
-    } else {
-        System.out.println("\nOperação cancelada. Você continua vinculado à sua Empresa Júnior.");
     }
-}
 }
