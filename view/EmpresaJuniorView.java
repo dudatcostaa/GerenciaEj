@@ -1,23 +1,28 @@
 package view;
 
-import controller.EmpresaJuniorController;
+import controller.CandidaturaController;
+import controller.EmpresaJuniorController; // NOVO
 import java.util.List;
-import java.util.Scanner;
+import java.util.Scanner; // NOVO
 import model.EmpresaJunior;
+import model.Usuario;
 import strategy.BuscaEJStrategy;
 import strategy.BuscarPorNomeStrategy;
 import strategy.BuscarTodasStrategy;
 
 public class EmpresaJuniorView {
     private EmpresaJuniorController controller;
+    private CandidaturaController candidaturaController; // NOVO
     private Scanner scanner;
 
     public EmpresaJuniorView() {
         this.controller = new EmpresaJuniorController();
+        this.candidaturaController = new CandidaturaController(); // NOVO
         this.scanner = new Scanner(System.in);
     }
 
-    public void exibirMenuBusca() {
+    // Alterado para receber o usuário logado do sistema
+    public void exibirMenuBusca(Usuario usuarioLogado) {
         System.out.println("\n--- BUSCAR EMPRESAS JUNIORES ---");
         System.out.println("1. Listar todas as EJs");
         System.out.println("2. Buscar por nome específico");
@@ -40,9 +45,27 @@ public class EmpresaJuniorView {
             return;
         }
 
-        // Executa a busca usando a estratégia definida
         List<EmpresaJunior> resultados = controller.realizarBusca(estrategia, termo);
         exibirResultados(resultados);
+
+        // FLUXO DO UC04: Só oferece a candidatura se a busca trouxe algum resultado
+        if (!resultados.isEmpty()) {
+            System.out.println("\n----------------------------------------");
+            System.out.print("Deseja solicitar entrada em alguma dessas EJs? (Digite o ID da empresa ou 0 para voltar): ");
+            long idEjEscolhido = scanner.nextLong();
+            scanner.nextLine(); // Limpa o buffer
+
+            if (idEjEscolhido != 0) {
+                // Dispara o controlador que aplica a RN06 e executa o RF19
+                boolean sucesso = candidaturaController.processarSolicitacaoIngresso(usuarioLogado.getId(), idEjEscolhido);
+
+                if (sucesso) {
+                    System.out.println("\n[SUCESSO] Solicitação enviada! Aguarde a aprovação de um Diretor. (RN01/RF19)");
+                } else {
+                    System.out.println("\n[ERRO] Você não pode enviar esta solicitação. Regra de Negócio Violada: O usuário já participa de uma Empresa Júnior ou possui solicitação ativa. (RN06)");
+                }
+            }
+        }
     }
 
     private void exibirResultados(List<EmpresaJunior> empresas) {
@@ -53,7 +76,6 @@ public class EmpresaJuniorView {
 
         System.out.println("\n--- RESULTADO DA BUSCA ---");
         for (EmpresaJunior ej : empresas) {
-            // Ajuste os métodos de exibição de acordo com os getters da sua model EmpresaJunior
             System.out.println("ID: " + ej.getId() + " | Nome: " + ej.getNome() + " | CNPJ: " + ej.getCnpj());
         }
     }

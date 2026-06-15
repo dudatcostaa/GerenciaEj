@@ -5,7 +5,6 @@ import controller.FuncionalidadeController;
 import controller.KambanController;
 import controller.LeadController;
 import controller.UsuarioController;
-import model.Funcionalidade;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +12,7 @@ import java.util.Scanner;
 import model.Arquivo;
 import model.BibliotecaService;
 import model.Cargo;
+import model.Funcionalidade;
 import model.Projeto;
 import model.StatusProjeto;
 import model.Usuario;
@@ -25,6 +25,7 @@ public class UsuarioView {
     private List<Projeto> mockProjetos = new ArrayList<>();
     private BibliotecaService biblioService = new BibliotecaService();
     private List<Long> idsAtivos = Arrays.asList(1L, 2L, 3L);
+    private controller.CandidaturaController candController = new controller.CandidaturaController();
 
     public UsuarioView() {
         // Inicializa dados do kamban que estavam na Main da sua amiga
@@ -114,6 +115,28 @@ public class UsuarioView {
         }
     }
 
+    private void executarFluxoExclusao() {
+        System.out.print("\nTem certeza que deseja excluir uma conta? (Sim/Não): ");
+        String confirmacao = leitor.nextLine();
+
+        if (confirmacao.equalsIgnoreCase("Sim") || confirmacao.equalsIgnoreCase("S")) {
+            System.out.print("Confirme o E-mail da conta a ser excluída: ");
+            String emailConfirmar = leitor.nextLine();
+            System.out.print("Confirme a Senha da conta: ");
+            String senhaConfirmar = leitor.nextLine();
+
+            boolean sucesso = controller.excluirUsuario(emailConfirmar, senhaConfirmar);
+
+            if (sucesso) {
+                System.out.println("\n[SUCESSO] Conta excluída com sucesso!");
+            } else {
+                System.out.println("\n[ERRO] Credenciais incorretas.");
+            }
+        } else {
+            System.out.println("Exclusão cancelada.");
+        }
+    }
+
     private void exibirMenuInternoEJ(Usuario usuarioLogado) {
         FuncionalidadeController funcController = new FuncionalidadeController();
 
@@ -157,7 +180,7 @@ public class UsuarioView {
                 labels.add("Buscar Empresas Juniores");
                 acoes.add(() -> {
                     EmpresaJuniorView ejView = new EmpresaJuniorView();
-                    ejView.exibirMenuBusca();
+                    ejView.exibirMenuBusca(usuarioLogado);
                 });
             }
 
@@ -196,6 +219,12 @@ public class UsuarioView {
             System.out.println("\n========================================");
             System.out.println("      GERENCIA EJ - MENU INTERNO        ");
             System.out.println("========================================");
+            System.out.println("1. Acessar Quadros Kanban");
+            System.out.println("2. Acessar Biblioteca");
+            System.out.println("3. Acessar Módulo de Leads"); // NOVO
+            System.out.println("4. Painel Administrativo (Aprovar EJs)"); // NOVO
+            System.out.println("5. Buscar Empresas Juniores");
+            System.out.println("6. Painel do Diretor (Notificações de Ingresso)");
             for (int i = 0; i < labels.size(); i++) {
                 System.out.println((i + 1) + ". " + labels.get(i));
             }
@@ -204,10 +233,35 @@ public class UsuarioView {
 
             String entrada = leitor.nextLine();
 
-            if (entrada.equals("0")) {
-                System.out.println("Efetuando logout... Voltando à tela inicial.");
-                break;
-            }
+            if (entrada.equals("1")) {
+                KambanView kView = new KambanView(leitor);
+                KambanController kController = new KambanController(kView);
+                kController.iniciar();
+            } else if (entrada.equals("2")) {
+                BibliotecaView bView = new BibliotecaView();
+                BibliotecaController bController = new BibliotecaController(
+                        biblioService, bView, usuarioLogado,
+                        controller.getUsuariosDoSistema(), idsAtivos);
+                bController.iniciar();
+            } else if (entrada.equals("3")) { // NOVO
+                LeadView leadView = new LeadView();
+                LeadController leadController = new LeadController(leadView);
+                leadController.iniciarModulo();
+            } else if (entrada.equals("4")) { // NOVO
+                executarModuloAdmin();
+            } else if (entrada.equals("5")) {
+                EmpresaJuniorView ejView = new EmpresaJuniorView();
+                ejView.exibirMenuBusca(usuarioLogado);
+            } else if (entrada.equals("6")) {
+                if (usuarioLogado.getCargo() == model.Cargo.DIRETOR) {
+                    executarPainelDiretor(usuarioLogado); 
+                } else {
+            System.out.println("\n[ERRO] Acesso negado! Apenas usuários com cargo de DIRETOR podem acessar...");
+        }
+    } else if (entrada.equals("0")) { // <--- DEIXE APENAS ESSA LINHA, APAGUE A OUTRA REPETIDA
+        System.out.println("Efetuando logout... Voltando à tela inicial.");
+        break;
+    }
 
             try {
                 int escolha = Integer.parseInt(entrada.trim());
@@ -222,25 +276,49 @@ public class UsuarioView {
         }
     }
 
-    private void executarFluxoExclusao() {
-        System.out.print("\nTem certeza que deseja excluir uma conta? (Sim/Não): ");
-        String confirmacao = leitor.nextLine();
+    private void executarPainelDiretor(Usuario usuarioLogado) { // <--- RECEBE O PARAMETRO
+        System.out.println("\n========================================");
+        System.out.println("     PAINEL DO DIRETOR - NOTIFICAÇÕES   ");
+        System.out.println("========================================");
 
-        if (confirmacao.equalsIgnoreCase("Sim") || confirmacao.equalsIgnoreCase("S")) {
-            System.out.print("Confirme o E-mail da conta a ser excluída: ");
-            String emailConfirmar = leitor.nextLine();
-            System.out.print("Confirme a Senha da conta: ");
-            String senhaConfirmar = leitor.nextLine();
+        // Passa o ID do diretor para a busca filtrada
+        List<String> pendentes = candController.obterNotificacoesPendentes(usuarioLogado.getId());
 
-            boolean sucesso = controller.excluirUsuario(emailConfirmar, senhaConfirmar);
+        if (pendentes.isEmpty()) {
+            System.out.println("Não há nenhuma solicitação de ingresso pendente de outros usuários no momento.");
+            return;
+        }
 
-            if (sucesso) {
-                System.out.println("\n[SUCESSO] Conta excluída com sucesso!");
+        // ... resto do seu código igualzinho ...
+
+        System.out.println("Solicitações aguardando sua decisão:");
+        for (String solicitacao : pendentes) {
+            System.out.println(solicitacao);
+        }
+
+        System.out.println("----------------------------------------");
+        System.out.print("Digite o ID da solicitação que deseja avaliar (ou 0 para voltar): ");
+        long idEscolhido = leitor.nextLong();
+        leitor.nextLine(); // Limpa buffer
+
+        if (idEscolhido != 0) {
+            System.out.print("Deseja [1] APROVAR ou [2] RECUSAR? ");
+            int decisao = leitor.nextInt();
+            leitor.nextLine(); // Limpa buffer
+
+            if (decisao == 1) {
+                candController.responderSolicitacao(idEscolhido, true);
+                System.out.println("\n[SUCESSO] Candidatura aprovada com sucesso!");
+            } else if (decisao == 2) {
+                candController.responderSolicitacao(idEscolhido, false);
+                System.out.println("\n[AVISO] Candidatura recusada.");
             } else {
-                System.out.println("\n[ERRO] Credenciais incorretas.");
+                System.out.println("\n[ERRO] Opção inválida.");
             }
-        } else {
-            System.out.println("Exclusão cancelada.");
         }
     }
-}                    
+    private void executarModuloAdmin() {
+    System.out.println("\n[INFO] Painel Administrativo (desenvolvido pelas meninas).");
+}
+}              
+
