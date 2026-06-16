@@ -78,8 +78,6 @@ public class CandidaturaDAO {
         try {
             Connection conn = DatabaseConnection.getInstance().getConnection();
 
-            // busca o usuario_id e empresa_junior_id antes de atualizar, para sincronizar
-            // a tabela usuario quando a candidatura for aprovada
             Long usuarioId = null;
             Long empresaJuniorId = null;
             String sqlBusca = "SELECT usuario_id, empresa_junior_id FROM candidatura_ej WHERE id = ?";
@@ -99,7 +97,6 @@ public class CandidaturaDAO {
                 stmt.executeUpdate();
             }
 
-            // sincroniza usuario.empresa_junior_id de acordo com o novo status
             if (usuarioId != null) {
                 if ("APROVADO".equals(novoStatus)) {
                     sincronizarEmpresaDoUsuario(conn, usuarioId, empresaJuniorId);
@@ -112,7 +109,7 @@ public class CandidaturaDAO {
         }
     }
 
-    // Atende ao RF05 e libera a RN06: Muda o vínculo ativo para INATIVO
+    // UC05
     public boolean sairDaEmpresaJunior(Long usuarioId) {
         String sql = "UPDATE candidatura_ej SET status = 'INATIVO' WHERE usuario_id = ? AND status = 'APROVADO'";
         
@@ -123,18 +120,16 @@ public class CandidaturaDAO {
                 int linhasAfetadas = stmt.executeUpdate();
 
                 if (linhasAfetadas > 0) {
-                    // limpa o vínculo direto na tabela usuario também
                     sincronizarEmpresaDoUsuario(conn, usuarioId, null);
                 }
 
-                return linhasAfetadas > 0; // Retorna true se o usuário realmente tinha um vínculo ativo e saiu
+                return linhasAfetadas > 0; 
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao se desligar da empresa júnior: " + e.getMessage());
         }
     }
 
-    // atualiza usuario.empresa_junior_id (usa null para desvincular)
     private void sincronizarEmpresaDoUsuario(Connection conn, Long usuarioId, Long empresaJuniorId) throws SQLException {
         String sql = "UPDATE usuario SET empresa_junior_id = ? WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -147,7 +142,8 @@ public class CandidaturaDAO {
             stmt.executeUpdate();
         }
     }
-    // Verifica se o usuário possui um vínculo atualmente ativo/aprovado em alguma EJ (RNF03)
+
+    // UC04 e UC06
     public boolean temVinculoAprovado(Long usuarioId) {
         String sql = "SELECT COUNT(*) FROM candidatura_ej WHERE usuario_id = ? AND status = 'APROVADO'";
         
