@@ -1,4 +1,3 @@
-import view.EmpresaJuniorView;
 import view.UsuarioView;
 
 public class Main {
@@ -6,8 +5,5 @@ public class Main {
     
         UsuarioView tela = new UsuarioView();
         tela.exibirMenuPrincipal();
-
-        EmpresaJuniorView viewBusca = new EmpresaJuniorView();
-        viewBusca.exibirMenuBusca();
     }
 }

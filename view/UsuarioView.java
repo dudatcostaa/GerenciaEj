@@ -162,15 +162,18 @@ public class UsuarioView {
             // 1. MONTANDO AS OPÇÕES DO MENU DINAMICAMENTE (RNF03)
             // ========================================================
 
-            // Módulos base da EJ: Só aparecem para quem já está APROVADO em uma EJ
-            if (emEj) {
+            // Módulos base da EJ: só aparecem para quem está APROVADO em uma EJ
+            // E que tenha selecionado a funcionalidade correspondente (RN02)
+            if (emEj && selecionadas.contains(Funcionalidade.KANBAN)) {
                 labels.add("Acessar Quadros Kanban");
                 acoes.add(() -> {
                     KambanView kView = new KambanView(leitor);
                     KambanController kController = new KambanController(kView);
                     kController.iniciar();
                 });
+            }
 
+            if (emEj && selecionadas.contains(Funcionalidade.BIBLIOTECA)) {
                 labels.add("Acessar Biblioteca");
                 acoes.add(() -> {
                     BibliotecaView bView = new BibliotecaView();
@@ -179,7 +182,9 @@ public class UsuarioView {
                             controller.getUsuariosDoSistema(), idsAtivos);
                     bController.iniciar();
                 });
+            }
 
+            if (emEj && selecionadas.contains(Funcionalidade.LEADS)) {
                 labels.add("Acessar Módulo de Leads");
                 acoes.add(() -> {
                     LeadView leadView = new LeadView();
