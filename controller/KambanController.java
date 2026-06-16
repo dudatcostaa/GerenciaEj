@@ -2,11 +2,11 @@ package controller;
 
 import java.util.List;
 import model.Projeto;
-import dao.ProjetoDAO;
 import model.QuadroKamban;
-import dao.QuadroKambanDAO;
 import model.Tarefa;
-import dao.TarefaDAO;
+import model.dao.ProjetoDAO;
+import model.dao.QuadroKambanDAO;
+import model.dao.TarefaDAO;
 import view.KambanView;
 
 public class KambanController {

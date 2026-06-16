@@ -1,8 +1,8 @@
 package controller;
 
-import dao.FuncionalidadeDAO;
 import model.Cargo;
 import model.Funcionalidade;
+import model.dao.FuncionalidadeDAO;
 
 import java.util.Arrays;
 import java.util.List;

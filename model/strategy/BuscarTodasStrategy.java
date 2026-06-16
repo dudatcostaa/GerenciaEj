@@ -1,7 +1,8 @@
-package strategy;
+package model.strategy;
 
 import model.EmpresaJunior;
-import dao.EmpresaJuniorDAO;
+import model.dao.EmpresaJuniorDAO;
+
 import java.util.List;
 
 public class BuscarTodasStrategy implements BuscaEJStrategy {

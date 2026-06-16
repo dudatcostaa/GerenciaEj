@@ -1,7 +1,7 @@
 package controller;
 
-import dao.GastoDAO;
 import model.Gasto;
+import model.dao.GastoDAO;
 
 import java.util.Date;
 import java.util.List;

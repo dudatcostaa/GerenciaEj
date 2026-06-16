@@ -1,8 +1,9 @@
 package controller;
 
-import dao.EmpresaJuniorDAO;
 import model.EmpresaJunior;
-import strategy.BuscaEJStrategy;
+import model.dao.EmpresaJuniorDAO;
+import model.strategy.BuscaEJStrategy;
+
 import java.util.List;
 
 public class EmpresaJuniorController {

@@ -4,9 +4,9 @@ import model.Cargo;
 import model.SolicitacaoEJ;
 import model.StatusEJ;
 import model.StatusSolicitacao;
-import dao.EmpresaJuniorDAO;
-import dao.SolicitacaoDAO;
-import dao.UsuarioDAO;
+import model.dao.EmpresaJuniorDAO;
+import model.dao.SolicitacaoDAO;
+import model.dao.UsuarioDAO;
 import view.AdminView;
 
 public class SolicitacaoController {

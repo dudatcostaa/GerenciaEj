@@ -1,7 +1,7 @@
 package controller;
 
-import dao.PropostaDAO;
 import model.Proposta;
+import model.dao.PropostaDAO;
 
 import java.util.Date;
 import java.util.List;

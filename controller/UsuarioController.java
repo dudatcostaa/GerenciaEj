@@ -2,9 +2,9 @@ package controller;
 
 import java.util.List;
 
-import dao.UsuarioDAO;
 import model.Cargo;
 import model.Usuario;
+import model.dao.UsuarioDAO;
 
 public class UsuarioController {
 

@@ -1,7 +1,8 @@
 package controller;
 
-import dao.MetricasDAO;
 import java.util.Map;
+
+import model.dao.MetricasDAO;
 
 public class MetricasController {
 

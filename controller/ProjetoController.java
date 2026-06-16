@@ -1,8 +1,8 @@
 package controller;
 
-import dao.ProjetoDAO;
 import model.Projeto;
 import model.StatusProjeto;
+import model.dao.ProjetoDAO;
 
 import java.util.Date;
 import java.util.List;

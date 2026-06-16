@@ -1,8 +1,8 @@
 package controller;
 
-import dao.EventoDAO;
 import model.Evento;
 import model.Usuario;
+import model.dao.EventoDAO;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

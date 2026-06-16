@@ -1,9 +1,9 @@
 package controller;
 
-import dao.RelatorioDAO;
 import model.Gasto;
 import model.Proposta;
 import model.Usuario;
+import model.dao.RelatorioDAO;
 
 import java.io.FileWriter;
 import java.io.IOException;

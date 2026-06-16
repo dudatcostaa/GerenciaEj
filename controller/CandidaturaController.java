@@ -1,6 +1,6 @@
 package controller;
 
-import dao.CandidaturaDAO;
+import model.dao.CandidaturaDAO;
 
 public class CandidaturaController {
     private CandidaturaDAO candidaturaDAO;

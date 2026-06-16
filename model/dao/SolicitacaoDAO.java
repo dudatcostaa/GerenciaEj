@@ -1,4 +1,4 @@
-package dao;
+package model.dao;
 
 import model.DatabaseConnection;
 import model.EmpresaJunior;

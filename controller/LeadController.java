@@ -3,8 +3,8 @@ package controller;
 import java.util.List;
 import model.Lead;
 import model.StatusLead;
+import model.dao.LeadDAO;
 import view.LeadView;
-import dao.LeadDAO;
 
 public class LeadController {
 

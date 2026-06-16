@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Scanner; // NOVO
 import model.EmpresaJunior;
 import model.Usuario;
-import strategy.BuscaEJStrategy;
-import strategy.BuscarPorNomeStrategy;
-import strategy.BuscarTodasStrategy;
+import model.strategy.BuscaEJStrategy;
+import model.strategy.BuscarPorNomeStrategy;
+import model.strategy.BuscarTodasStrategy;
 
 public class EmpresaJuniorView {
     private EmpresaJuniorController controller;
