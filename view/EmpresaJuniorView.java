@@ -21,7 +21,7 @@ public class EmpresaJuniorView {
         this.scanner = new Scanner(System.in);
     }
 
-    // Alterado para receber o usuário logado do sistema
+    // UC03
     public void exibirMenuBusca(Usuario usuarioLogado) {
         System.out.println("\n--- BUSCAR EMPRESAS JUNIORES ---");
         System.out.println("1. Listar todas as EJs");
@@ -48,15 +48,14 @@ public class EmpresaJuniorView {
         List<EmpresaJunior> resultados = controller.realizarBusca(estrategia, termo);
         exibirResultados(resultados);
 
-        // FLUXO DO UC04: Só oferece a candidatura se a busca trouxe algum resultado
+        // UC04
         if (!resultados.isEmpty()) {
             System.out.println("\n----------------------------------------");
             System.out.print("Deseja solicitar entrada em alguma dessas EJs? (Digite o ID da empresa ou 0 para voltar): ");
             long idEjEscolhido = scanner.nextLong();
-            scanner.nextLine(); // Limpa o buffer
+            scanner.nextLine();
 
             if (idEjEscolhido != 0) {
-                // Dispara o controlador que aplica a RN06 e executa o RF19
                 boolean sucesso = candidaturaController.processarSolicitacaoIngresso(usuarioLogado.getId(), idEjEscolhido);
 
                 if (sucesso) {

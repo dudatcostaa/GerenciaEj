@@ -14,7 +14,7 @@ public class EmpresaJunior {
         this.id = id;
         this.nome = nome;
         this.cnpj = cnpj;
-        this.status = StatusEJ.PENDENTE; // toda EJ começa pendente de validação
+        this.status = StatusEJ.PENDENTE;
         this.usuarios = new ArrayList<>();
     }
 

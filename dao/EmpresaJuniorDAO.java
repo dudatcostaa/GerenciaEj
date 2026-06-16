@@ -15,7 +15,6 @@ public class EmpresaJuniorDAO {
         this.connection = DatabaseConnection.getInstance().getConnection();
     }
 
-    // cadastra uma empresa junior nova
     public EmpresaJunior cadastrar(String nome, String cnpj) {
         String sql = "INSERT INTO empresa_junior (nome, cnpj) VALUES (?, ?)";
 
@@ -34,7 +33,6 @@ public class EmpresaJuniorDAO {
         return null;
     }
 
-    // atualiza o status da empresa junior
     public void atualizarStatus(Long id, StatusEJ status) {
         String sql = "UPDATE empresa_junior SET status = ? WHERE id = ?";
 
@@ -47,7 +45,7 @@ public class EmpresaJuniorDAO {
         }
     }
 
-    // lista todas as empresas juniores
+    // UC03
     public List<EmpresaJunior> listarTodas() {
         List<EmpresaJunior> empresas = new ArrayList<>();
         String sql = "SELECT * FROM empresa_junior";
@@ -55,7 +53,6 @@ public class EmpresaJuniorDAO {
         try (PreparedStatement stmt = connection.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                // Ajuste os parâmetros (Long, String) de acordo com o construtor da sua model EmpresaJunior
                 EmpresaJunior ej = new EmpresaJunior(rs.getLong("id"), rs.getString("nome"), rs.getString("cnpj"));
                 empresas.add(ej);
             }
@@ -65,6 +62,7 @@ public class EmpresaJuniorDAO {
         return empresas;
     }
 
+    // UC03
     public List<EmpresaJunior> buscarPorNome(String nome) {
         List<EmpresaJunior> empresas = new ArrayList<>();
         String sql = "SELECT * FROM empresa_junior WHERE nome LIKE ?";

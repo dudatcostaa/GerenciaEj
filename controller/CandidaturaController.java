@@ -9,34 +9,33 @@ public class CandidaturaController {
         this.candidaturaDAO = new CandidaturaDAO();
     }
 
-    /**
-     * Aplica a RN06 e gerencia o envio da solicitação (RF19)
-     * @return true se a solicitação foi enviada, false se foi barrada pela RN06
-     */
+    // UC04
     public boolean processarSolicitacaoIngresso(Long usuarioId, Long ejIdEscolhido) {
-        // Validação da RN06: O usuário já participa ou está tentando participar de uma EJ?
         if (candidaturaDAO.temCandidaturaAtivaOuPendente(usuarioId)) {
-            return false; // Barrado! Viola a regra de negócio.
+            return false;
         }
 
-        // Se passou na regra, o RF19 é executado e o registro nasce como PENDENTE
         candidaturaDAO.enviarSolicitacao(usuarioId, ejIdEscolhido);
-        return true; // Sucesso!
+        return true;
     }
 
+    // UC06
     public java.util.List<String> obterNotificacoesPendentes(Long diretorId) {
         return candidaturaDAO.listarCandidaturasPendentes(diretorId);
     }
 
+    // UC04 e UC06
     public void responderSolicitacao(Long candidaturaId, boolean aprovada) {
         String novoStatus = aprovada ? "APROVADO" : "RECUSADO";
         candidaturaDAO.atualizarStatusCandidatura(candidaturaId, novoStatus);
     }
 
+    // UC05
     public boolean processarSaidaEmpresa(Long usuarioId) {
         return candidaturaDAO.sairDaEmpresaJunior(usuarioId);
     }
 
+    // UC04 e UC06
     public boolean temVinculoAprovado(Long usuarioId) {
         return candidaturaDAO.temVinculoAprovado(usuarioId);
     }
