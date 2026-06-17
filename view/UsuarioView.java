@@ -21,20 +21,17 @@ public class UsuarioView {
     private UsuarioController controller = new UsuarioController();
     private Scanner leitor = new Scanner(System.in);
 
-    // Mocks originais do seu trio centralizados temporariamente na sessão da View
+    // Mocks antes do banco
     private List<Projeto> mockProjetos = new ArrayList<>();
     private BibliotecaService biblioService = new BibliotecaService();
     private List<Long> idsAtivos = Arrays.asList(1L, 2L, 3L);
     private controller.CandidaturaController candController = new controller.CandidaturaController();
 
     public UsuarioView() {
-        // Inicializa dados do kamban que estavam na Main da sua amiga
         mockProjetos.add(new Projeto(1L, "Teste A", "teste", StatusProjeto.EM_PLANEJAMENTO));
         mockProjetos.add(new Projeto(2L, "Teste B", "teste", StatusProjeto.EM_PLANEJAMENTO));
         mockProjetos.add(new Projeto(3L, "Teste C", "teste", StatusProjeto.EM_EXECUCAO));
         mockProjetos.add(new Projeto(4L, "Teste D", "teste", StatusProjeto.FINALIZADO));
-
-        // Inicializa arquivos mock da biblioteca da sua amiga
         biblioService.adicionarArquivo(new Arquivo(101L, "Teste1", "/home/sofigazolla/formatacao.py", 2L));
         biblioService.adicionarArquivo(new Arquivo(102L, "Teste2", "/home/sofigazolla/resolucao_p1_2015.pdf", 1L));
         biblioService.adicionarArquivo(new Arquivo(103L, "Teste3", "/home/sofigazolla/Sapixels-diretores.png", 3L));
@@ -81,8 +78,6 @@ public class UsuarioView {
         if (usuarioLogado != null) {
             System.out.println("\n[SUCESSO] Login realizado!");
             System.out.println("Bem-vindo(a), " + usuarioLogado.getNome() + " [" + usuarioLogado.getCargo() + "]");
-
-            // Abre o menu interno do sistema passando o objeto do usuário que logou
             exibirMenuInternoEJ(usuarioLogado);
         } else {
             System.out.println("\n[ERRO] E-mail ou senha incorretos");
@@ -141,29 +136,16 @@ public class UsuarioView {
         FuncionalidadeController funcController = new FuncionalidadeController();
 
         while (true) {
-            // RNF03 — Checa dinamicamente se o usuário possui vínculo ATIVO ('APROVADO') no
-            // banco
             boolean emEj = candController.temVinculoAprovado(usuarioLogado.getId());
-
-            // Captura as funcionalidades configuradas tratando o erro de tabela inexistente
-            // de forma limpa
             List<Funcionalidade> selecionadas = new ArrayList<>();
             try {
                 selecionadas = funcController.listarSelecionadas(usuarioLogado.getId());
             } catch (Exception e) {
-                // Silencia o erro para não quebrar o visual do terminal enquanto as meninas não
-                // criam a tabela
             }
 
             List<String> labels = new ArrayList<>();
             List<Runnable> acoes = new ArrayList<>();
 
-            // ========================================================
-            // 1. MONTANDO AS OPÇÕES DO MENU DINAMICAMENTE (RNF03)
-            // ========================================================
-
-            // Módulos base da EJ: só aparecem para quem está APROVADO em uma EJ
-            // E que tenha selecionado a funcionalidade correspondente (RN02)
             if (emEj && selecionadas.contains(Funcionalidade.KANBAN)) {
                 labels.add("Acessar Quadros Kanban");
                 acoes.add(() -> {
@@ -193,13 +175,13 @@ public class UsuarioView {
                 });
             }
 
-            // Painel Administrativo Geral
+            // Painel Administrativo (Só para admins)
             labels.add("Painel Administrativo (Aprovar EJs)");
             acoes.add(() -> {
                 executarModuloAdmin();
             });
 
-            // Buscar Empresas Juniores: Só aparece para quem NÃO está em uma EJ ainda
+            // Buscar Empresas Juniores: Só aparece para quem NÃO está em uma EJ ainda (uc03)
             if (!emEj) {
                 labels.add("Buscar Empresas Juniores (Solicitar Ingresso)");
                 acoes.add(() -> {
@@ -208,7 +190,7 @@ public class UsuarioView {
                 });
             }
 
-            // Painel do Diretor: EXCLUSIVO para quem tem cargo de DIRETOR (RN01)
+            // Painel do Diretor: exclusivo para quem tem cargo de DIRETOR (rn01)
             if (usuarioLogado.getCargo() == Cargo.DIRETOR) {
                 labels.add("Painel do Diretor (Notificações de Ingresso)");
                 acoes.add(() -> {
@@ -224,7 +206,7 @@ public class UsuarioView {
                 });
             }
 
-            // Módulos customizados das meninas: Só aparecem se estiver em EJ e configurados
+            // Só aparece se já estiver em Ej
             if (emEj && selecionadas.contains(Funcionalidade.METRICAS)) {
                 labels.add("Métricas de Desempenho");
                 acoes.add(() -> {
@@ -267,14 +249,10 @@ public class UsuarioView {
                 });
             }
 
-            // ========================================================
-            // 2. RENDERIZAÇÃO DO MENU NO TERMINAL
-            // ========================================================
             System.out.println("\n========================================");
             System.out.println("      GERENCIA EJ - MENU INTERNO        ");
             System.out.println("========================================");
 
-            // Imprime as opções geradas sequencialmente (1, 2, 3...)
             for (int i = 0; i < labels.size(); i++) {
                 System.out.println((i + 1) + ". " + labels.get(i));
             }
@@ -288,13 +266,9 @@ public class UsuarioView {
                 break;
             }
 
-            // ========================================================
-            // 3. EXECUÇÃO DA AÇÃO SELECIONADA
-            // ========================================================
             try {
                 int escolha = Integer.parseInt(entrada);
                 if (escolha >= 1 && escolha <= acoes.size()) {
-                    // Roda a ação exata correspondente ao número digitado
                     acoes.get(escolha - 1).run();
                 } else {
                     System.out.println("\n[ERRO] Opção inválida!");
@@ -354,7 +328,7 @@ public class UsuarioView {
     }
 
     private void executarModuloAdmin() {
-        System.out.println("\n[INFO] Painel Administrativo (desenvolvido pelas meninas).");
+        System.out.println("\n[INFO] Painel Administrativo.");
     }
 
     private void executarFluxoSaidaEmpresa(Usuario usuarioLogado) {
@@ -365,13 +339,14 @@ public class UsuarioView {
 
         String confirmacao = leitor.nextLine().trim().toUpperCase();
 
+        //UC05
         if (confirmacao.equals("S")) {
             boolean sucesso = candController.processarSaidaEmpresa(usuarioLogado.getId());
 
             if (sucesso) {
                 System.out.println(
-                        "\n[SUCESSO] Você se desligou da Empresa Júnior com sucesso! Seu vínculo agora está INATIVO. (RF05)");
-                System.out.println("[INFO] Você está livre para solicitar ingresso em outras empresas. (RN06)");
+                        "\n[SUCESSO] Você se desligou da Empresa Júnior com sucesso! Seu vínculo agora está INATIVO.");
+                System.out.println("[INFO] Você está livre para solicitar ingresso em outras empresas.");
             } else {
                 System.out.println(
                         "\n[AVISO] Não foi possível concluir a ação. Você não possui nenhum vínculo ativo ('APROVADO') no sistema.");
