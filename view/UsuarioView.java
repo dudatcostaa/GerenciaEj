@@ -4,6 +4,7 @@ import controller.BibliotecaController;
 import controller.FuncionalidadeController;
 import controller.KambanController;
 import controller.LeadController;
+import controller.SolicitacaoController;
 import controller.UsuarioController;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,8 +13,10 @@ import java.util.Scanner;
 import model.Arquivo;
 import model.BibliotecaService;
 import model.Cargo;
+import model.EmpresaJunior;
 import model.Funcionalidade;
 import model.Projeto;
+import model.SolicitacaoEJ;
 import model.StatusProjeto;
 import model.Usuario;
 
@@ -76,6 +79,13 @@ public class UsuarioView {
         System.out.print("Digite sua senha: ");
         String senhaInformada = leitor.nextLine();
 
+        // verificação especial para o admin
+        if (emailInformado.equals("admin@gerenciaej.com") && senhaInformada.equals("admin123")) {
+            System.out.println("\n[SUCESSO] Bem-vindo, Administrador!");
+            exibirMenuAdministrador(); 
+            return;
+        }
+
         Usuario usuarioLogado = controller.autenticarUsuario(emailInformado, senhaInformada);
 
         if (usuarioLogado != null) {
@@ -89,6 +99,86 @@ public class UsuarioView {
         }
     }
 
+    private void exibirMenuAdministrador() {
+        while (true) {
+            System.out.println("\n=== PAINEL ADMINISTRATIVO ===");
+            System.out.println("1. Avaliar solicitações de EJs");
+            System.out.println("0. Fazer Logout");
+            System.out.print("Escolha uma opção: ");
+            String op = leitor.nextLine();
+
+            if (op.equals("1")) {
+                // 1. Instancia os DAOs
+                dao.SolicitacaoDAO solDAO = new dao.SolicitacaoDAO();
+                dao.UsuarioDAO userDAO = new dao.UsuarioDAO();
+                dao.EmpresaJuniorDAO ejDAO = new dao.EmpresaJuniorDAO();
+
+                // busca todos os dados necessários do banco
+                List<Usuario> usuarios = userDAO.listarTodos();
+                List<EmpresaJunior> empresas = ejDAO.listarTodas();
+
+                // busca as solicitações pendentes passando as listas
+                List<SolicitacaoEJ> pendentes = solDAO.listarPendentes(usuarios, empresas);
+
+                // verifica se tem algo para avaliar
+                if (pendentes.isEmpty()) {
+                    System.out.println("\n[AVISO] Nenhuma solicitação pendente no momento.");
+                } else {
+                    System.out.println("\n[SUCESSO] Foram encontradas " + pendentes.size() + " solicitações pendentes.");
+                    
+                    // ==========================================================
+                    // LISTAGEM CONSOLIDADA DE SOLICITAÇÕES (RF21)
+                    // ==========================================================
+                    System.out.println("\n--------------------------------------------------------------");
+                    System.out.println("ID   | EMPRESA JÚNIOR             | SOLICITANTE");
+                    System.out.println("--------------------------------------------------------------");
+                    for (SolicitacaoEJ req : pendentes) {
+                        // Imprime os dados formatados em colunas
+                        System.out.printf("%-4d | %-26s | %s\n", 
+                            req.getId(), 
+                            req.getEmpresaJunior().getNome(), 
+                            req.getUsuario().getNome());
+                    }
+                    System.out.println("--------------------------------------------------------------");
+
+                    System.out.print("\nDigite o ID da solicitação que deseja avaliar (ou 0 para voltar): ");
+                    String entrada = leitor.nextLine().trim();
+
+                    if (!entrada.equals("0")) {
+                        try {
+                            long idEscolhido = Long.parseLong(entrada);
+                            SolicitacaoEJ selecionada = null;
+                            
+                            // Procura na lista a solicitação com o ID digitado
+                            for (SolicitacaoEJ req : pendentes) {
+                                if (req.getId() == idEscolhido) {
+                                    selecionada = req;
+                                    break;
+                                }
+                            }
+
+                            if (selecionada != null) {
+                                // Envia APENAS a escolhida para o Controller avaliar
+                                AdminView adminView = new AdminView();
+                                SolicitacaoController solController = new SolicitacaoController(adminView);
+                                solController.avaliarSolicitacao(selecionada);
+                            } else {
+                                System.out.println("\n[ERRO] ID não encontrado na lista de pendências.");
+                            }
+                        } catch (NumberFormatException e) {
+                            System.out.println("\n[ERRO] Digite um número de ID válido!");
+                        }
+                    }
+                }
+            } else if (op.equals("0")) {
+                System.out.println("Saindo do painel administrativo...");
+                break;
+            } else {
+                System.out.println("[ERRO] Opção inválida!");
+            }
+        }
+    }
+
     private void executarFluxoCadastro() {
         System.out.println("\n--- Tela de Cadastro ---");
         System.out.print("Nome: ");
@@ -96,9 +186,9 @@ public class UsuarioView {
         System.out.print("E-mail: ");
         String email = leitor.nextLine();
         System.out.print("Senha: ");
-        String senha = leitor.nextLine();
+        String senha = leitor.nextLine();   
         System.out.print("Cargo (1 para MEMBRO, 2 para DIRETOR): ");
-        String cargoStr = leitor.nextLine();
+        String cargoStr = leitor.nextLine();     
 
         if (nome.isBlank() || email.isBlank() || senha.isBlank() || cargoStr.isBlank()) {
             System.out.println("\n[AVISO] Todos os campos são obrigatórios!");
@@ -193,18 +283,17 @@ public class UsuarioView {
                 });
             }
 
-            // Painel Administrativo Geral
-            labels.add("Painel Administrativo (Aprovar EJs)");
-            acoes.add(() -> {
-                executarModuloAdmin();
-            });
-
             // Buscar Empresas Juniores: Só aparece para quem NÃO está em uma EJ ainda
             if (!emEj) {
                 labels.add("Buscar Empresas Juniores (Solicitar Ingresso)");
                 acoes.add(() -> {
                     EmpresaJuniorView ejView = new EmpresaJuniorView();
                     ejView.exibirMenuBusca(usuarioLogado);
+                });
+
+                labels.add("Solicitar Cadastro de Nova EJ do Zero");
+                acoes.add(() -> {
+                    executarFluxoSolicitarCadastroEJ(usuarioLogado);
                 });
             }
 
@@ -380,4 +469,34 @@ public class UsuarioView {
             System.out.println("\nOperação cancelada. Você continua vinculado à sua Empresa Júnior.");
         }
     }
-}
+
+private void executarFluxoSolicitarCadastroEJ(Usuario usuarioLogado) {
+        System.out.println("\n========================================");
+        System.out.println("   SOLICITAR CADASTRO DE NOVA EJ (UC08) ");
+        System.out.println("========================================");
+        System.out.print("Nome da Empresa Júnior: ");
+        String nomeEj = leitor.nextLine();
+        System.out.print("CNPJ da Empresa Júnior: ");
+        String cnpjEj = leitor.nextLine();
+
+        System.out.println("Abrindo janela para selecionar o documento comprobatório (PDF/Ata)...");
+        javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
+        fileChooser.setDialogTitle("Selecione o documento comprobatório da EJ");
+        
+        int userSelection = fileChooser.showOpenDialog(null);
+        String documentoUrl = "";
+        
+        if (userSelection == javax.swing.JFileChooser.APPROVE_OPTION) {
+            java.io.File arquivoSelecionado = fileChooser.getSelectedFile();
+            documentoUrl = arquivoSelecionado.getAbsolutePath();
+            System.out.println("-> Arquivo anexado com sucesso: " + arquivoSelecionado.getName());
+        } else {
+            System.out.println("\n[ERRO] Nenhum documento anexado!");
+            return;
+        }
+
+        System.out.println("\nEnviando dados para processamento...");
+        AdminView adminView = new AdminView();
+        SolicitacaoController solController = new SolicitacaoController(adminView);
+        solController.criarSolicitacao(nomeEj, cnpjEj, documentoUrl, usuarioLogado);
+    }}
