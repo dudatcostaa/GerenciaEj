@@ -59,9 +59,9 @@ public class EmpresaJuniorView {
                 boolean sucesso = candidaturaController.processarSolicitacaoIngresso(usuarioLogado.getId(), idEjEscolhido);
 
                 if (sucesso) {
-                    System.out.println("\n[SUCESSO] Solicitação enviada! Aguarde a aprovação de um Diretor. (RN01/RF19)");
+                    System.out.println("\n[SUCESSO] Solicitação enviada! Aguarde a aprovação de um Diretor.");
                 } else {
-                    System.out.println("\n[ERRO] Você não pode enviar esta solicitação. Regra de Negócio Violada: O usuário já participa de uma Empresa Júnior ou possui solicitação ativa. (RN06)");
+                    System.out.println("\n[ERRO] Você não pode enviar esta solicitação. Regra de Negócio Violada: O usuário já participa de uma Empresa Júnior ou possui solicitação ativa.");
                 }
             }
         }
