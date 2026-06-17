@@ -162,4 +162,41 @@ public class CandidaturaDAO {
         }
         return false;
     }
+
+    /*public void criarVinculoDireto(long idUsuario, long idEj, String status) {
+        String sql = "INSERT INTO candidatura_ej (usuario_id, empresa_junior_id, status) VALUES (?, ?, ?)";
+        
+        try {
+            Connection conn = DatabaseConnection.getInstance().getConnection();
+            
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setLong(1, idUsuario);
+                stmt.setLong(2, idEj);
+                stmt.setString(3, status);
+                stmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao criar vínculo direto no banco: " + e.getMessage());
+        }
+    }*/
+
+    public void criarVinculoDireto(long idUsuario, long idEj, String status) {
+        System.out.println("\n[DEBUG] Tentando gravar vínculo -> Usuário: " + idUsuario + " | EJ: " + idEj);
+        
+        String sql = "INSERT INTO candidatura_ej (usuario_id, empresa_junior_id, status) VALUES (?, ?, ?)";
+        
+        try {
+            Connection conn = DatabaseConnection.getInstance().getConnection();
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setLong(1, idUsuario);
+                stmt.setLong(2, idEj);
+                stmt.setString(3, status);
+                stmt.executeUpdate();
+                System.out.println("[DEBUG] Vínculo gravado com sucesso no banco!");
+            }
+        } catch (SQLException e) {
+            System.err.println("\n[ERRO FATAL NO BANCO DE DADOS]");
+            e.printStackTrace(); // Isso vai cuspir o motivo exato da recusa do MySQL na tela!
+        }
+    }
 }
