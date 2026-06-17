@@ -29,7 +29,7 @@ public class FuncionalidadeController {
             : "[ERRO] Não foi possível adicionar a funcionalidade.";
     }
 
-    // UC10 / RF08 — exclui uma funcionalidade previamente selecionada
+    // UC10 / RF08 — exclui uma funcionalidade
     public String remover(Long usuarioId, Funcionalidade funcionalidade) {
         if (!dao.possui(usuarioId, funcionalidade)) {
             return "[AVISO] \"" + funcionalidade.getDescricao() + "\" não está nas suas ferramentas.";
@@ -41,13 +41,12 @@ public class FuncionalidadeController {
             : "[ERRO] Não foi possível remover a funcionalidade.";
     }
 
-    // funcionalidades atualmente selecionadas pelo usuário
+    // lista funcionalidades atualmente selecionadas pelo usuário
     public List<Funcionalidade> listarSelecionadas(Long usuarioId) {
         return dao.listarSelecionadas(usuarioId);
     }
 
-    // funcionalidades ainda não selecionadas (disponíveis para adicionar)
-    // PROJETOS só fica disponível para usuários com cargo DIRETOR
+    // funcionalidades ainda não selecionadas
     public List<Funcionalidade> listarDisponiveis(Long usuarioId, Cargo cargo) {
         List<Funcionalidade> selecionadas = dao.listarSelecionadas(usuarioId);
         return Arrays.stream(Funcionalidade.values())

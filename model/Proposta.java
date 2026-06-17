@@ -16,15 +16,37 @@ public class Proposta {
         this.data = data;
     }
 
-    public Long getId()             { return id; }
-    public String getNomeCliente()  { return nomeCliente; }
-    public double getValor()        { return valor; }
-    public Date getData()           { return data; }
+    public Long getId() {
+        return id;
+    }
 
-    public void setId(Long id)              { this.id = id; }
-    public void setNomeCliente(String n)    { this.nomeCliente = n; }
-    public void setValor(double v)          { this.valor = v; }
-    public void setData(Date d)             { this.data = d; }
+    public String getNomeCliente() {
+        return nomeCliente;
+    }
+
+    public double getValor() {
+        return valor;
+    }
+
+    public Date getData() {
+        return data;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setNomeCliente(String n) {
+        this.nomeCliente = n;
+    }
+
+    public void setValor(double v) {
+        this.valor = v;
+    }
+
+    public void setData(Date d) {
+        this.data = d;
+    }
 
     @Override
     public String toString() {

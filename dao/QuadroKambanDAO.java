@@ -22,13 +22,13 @@ public class QuadroKambanDAO {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                // já existe, retorna o quadro salvo
+                // se ja existe, retorna o quadro salvo
                 QuadroKamban q = new QuadroKamban(rs.getString("titulo"));
                 q.setId(rs.getLong("id"));
                 q.setContadorTarefas(rs.getLong("contador_tarefas"));
                 return q;
             } else {
-                // não existe, cria um novo
+                // se não existe, cria um novo
                 return criar(projeto);
             }
         } catch (SQLException e) {

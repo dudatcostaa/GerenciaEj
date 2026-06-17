@@ -21,11 +21,8 @@ public class ProjetoView {
         this.scanner = scanner;
     }
 
-    // ponto de entrada do módulo
     public void iniciar() {
-        System.out.println("\n========================================");
-        System.out.println("       GERENCIA EJ - PROJETOS           ");
-        System.out.println("========================================");
+        System.out.println("--- GERENCIA EJ: PROJETOS ---");
 
         boolean rodando = true;
         while (rodando) {
@@ -49,8 +46,6 @@ public class ProjetoView {
             }
         }
     }
-
-    // ─── cadastrar ─────────────────────────────────────────────────────────────
 
     private void cadastrar() {
         System.out.println("\n--- CADASTRAR PROJETO ---");
@@ -77,8 +72,6 @@ public class ProjetoView {
         }
     }
 
-    // ─── listar ────────────────────────────────────────────────────────────────
-
     private void listar() {
         List<Projeto> projetos = controller.listarTodos();
 
@@ -99,8 +92,6 @@ public class ProjetoView {
         }
     }
 
-    // ─── editar ────────────────────────────────────────────────────────────────
-
     private void editar() {
         listar();
 
@@ -110,7 +101,7 @@ public class ProjetoView {
         Long id = lerLong();
         if (id == null) return;
 
-        // busca o projeto atual para mostrar valores existentes como referência
+        // busca o projeto atual para mostrar valores existentes
         Projeto atual = controller.listarTodos().stream()
                 .filter(p -> p.getId().equals(id))
                 .findFirst().orElse(null);
@@ -180,8 +171,6 @@ public class ProjetoView {
         }
     }
 
-    // ─── excluir ───────────────────────────────────────────────────────────────
-
     private void excluir() {
         listar();
 
@@ -207,8 +196,6 @@ public class ProjetoView {
             System.out.println("[ERRO] Projeto não encontrado ou erro ao excluir.");
         }
     }
-
-    // ─── helpers ───────────────────────────────────────────────────────────────
 
     private StatusProjeto lerStatus() {
         imprimirOpcoesStatus();

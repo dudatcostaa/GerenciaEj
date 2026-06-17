@@ -1,9 +1,9 @@
 package view;
 
 import controller.CandidaturaController;
-import controller.EmpresaJuniorController; // NOVO
+import controller.EmpresaJuniorController; 
 import java.util.List;
-import java.util.Scanner; // NOVO
+import java.util.Scanner; 
 import model.EmpresaJunior;
 import model.Usuario;
 import strategy.BuscaEJStrategy;
@@ -12,12 +12,12 @@ import strategy.BuscarTodasStrategy;
 
 public class EmpresaJuniorView {
     private EmpresaJuniorController controller;
-    private CandidaturaController candidaturaController; // NOVO
+    private CandidaturaController candidaturaController; 
     private Scanner scanner;
 
     public EmpresaJuniorView() {
         this.controller = new EmpresaJuniorController();
-        this.candidaturaController = new CandidaturaController(); // NOVO
+        this.candidaturaController = new CandidaturaController(); 
         this.scanner = new Scanner(System.in);
     }
 
@@ -29,7 +29,7 @@ public class EmpresaJuniorView {
         System.out.print("Escolha uma opção: ");
         
         int opcao = scanner.nextInt();
-        scanner.nextLine(); // Limpa o buffer
+        scanner.nextLine();
 
         BuscaEJStrategy estrategia = null;
         String termo = "";

@@ -35,9 +35,7 @@ public class EventoView {
     public void iniciar() {
         boolean rodando = true;
         while (rodando) {
-            System.out.println("\n========================================");
-            System.out.println("     GERENCIA EJ - AGENDA E EVENTOS     ");
-            System.out.println("========================================");
+            System.out.println("--- GERENCIA EJ: AGENDA ---");
             System.out.println("1. Ver calendário");
             System.out.println("2. Agendar evento");
             System.out.println("3. Convidar pessoas para um evento");
@@ -54,8 +52,6 @@ public class EventoView {
             }
         }
     }
-
-    // ─── calendário ────────────────────────────────────────────────────────────
 
     private void exibirCalendario() {
         int[] mesAno = lerMesAno();
@@ -79,7 +75,7 @@ public class EventoView {
         Calendar cal = Calendar.getInstance();
         cal.set(ano, mes - 1, 1);
         int diasNoMes = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-        int primeiroDiaSemana = cal.get(Calendar.DAY_OF_WEEK); // 1=Dom ... 7=Sáb
+        int primeiroDiaSemana = cal.get(Calendar.DAY_OF_WEEK);
 
         System.out.println("\n        " + NOMES_MES[mes] + " " + ano);
         System.out.println("Dom Seg Ter Qua Qui Sex Sáb");
@@ -131,8 +127,6 @@ public class EventoView {
         }
     }
 
-    // ─── agendar ───────────────────────────────────────────────────────────────
-
     private void agendarEvento() {
         System.out.println("\n--- AGENDAR EVENTO ---");
 
@@ -159,8 +153,6 @@ public class EventoView {
 
         System.out.println(controller.cadastrar(usuarioLogado, titulo, descricao, data));
     }
-
-    // ─── convidar ──────────────────────────────────────────────────────────────
 
     private void convidarPessoas() {
         System.out.println("\n--- CONVIDAR PESSOAS PARA UM EVENTO ---");
@@ -207,15 +199,13 @@ public class EventoView {
         System.out.println(controller.convidar(usuarioLogado, evento, convidado));
     }
 
-    // ─── helpers ───────────────────────────────────────────────────────────────
-
-    // pede mês e ano, usando o mês/ano atual como padrão (ENTER)
+    // pede mês e ano, usando o mês/ano atual como padrão
     private int[] lerMesAno() {
         Calendar agora = Calendar.getInstance();
         int mesAtual = agora.get(Calendar.MONTH) + 1;
         int anoAtual = agora.get(Calendar.YEAR);
 
-        System.out.printf("Mês (1-12) [ENTER para %d]: ", mesAtual);
+        System.out.printf("Mês (1-12) [clique enter para o mês atual]: ", mesAtual);
         String entradaMes = scanner.nextLine().trim();
         int mes = mesAtual;
         if (!entradaMes.isBlank()) {
@@ -230,7 +220,7 @@ public class EventoView {
             }
         }
 
-        System.out.printf("Ano [ENTER para %d]: ", anoAtual);
+        System.out.printf("Ano [clique enter para o ano atual]: ", anoAtual);
         String entradaAno = scanner.nextLine().trim();
         int ano = anoAtual;
         if (!entradaAno.isBlank()) {
@@ -244,7 +234,6 @@ public class EventoView {
         return new int[]{mes, ano};
     }
 
-    // lê uma opção entre 1 e max; retorna -1 para "0" (cancelar) ou entrada inválida
     private int lerOpcao(int max) {
         String entrada = scanner.nextLine().trim();
         try {

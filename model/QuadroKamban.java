@@ -2,7 +2,7 @@ package model;
 import java.util.*;
 
 public class QuadroKamban {
-    private static long contadorId = 1; // para iniciar o id dos quadros em 1 -> talvez alterar a lógica depois 
+    private static long contadorId = 1; // para iniciar o id dos quadros em 1
     private Long id;
     private String titulo;
     private List<Tarefa> tarefas; 

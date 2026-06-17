@@ -13,7 +13,7 @@ public class MetricasDAO {
         this.connection = DatabaseConnection.getInstance().getConnection();
     }
 
-    // nome da EJ do usuário logado (null se não vinculado)
+    // nome da ej do usuário logado
     public String buscarNomeEJ(Long usuarioId) {
         String sql = "SELECT ej.nome FROM empresa_junior ej " +
                      "JOIN usuario u ON u.empresa_junior_id = ej.id " +
@@ -28,7 +28,7 @@ public class MetricasDAO {
         return null;
     }
 
-    // soma o valor de todos os projetos do ano corrente
+    // soma o valor de todos os projetos do ano
     public double buscarFaturamentoAno() {
         String sql = "SELECT COALESCE(SUM(valor), 0) AS total FROM projeto " +
                      "WHERE YEAR(data_inicio) = YEAR(CURDATE())";
@@ -65,10 +65,10 @@ public class MetricasDAO {
         return 0;
     }
 
-    // retorna um mapa status -> quantidade para todos os projetos
+    // retorna a quantidade de projetos por status
     public Map<String, Integer> buscarProjetosPorStatus() {
         Map<String, Integer> mapa = new LinkedHashMap<>();
-        // garante que todos os status aparecem mesmo com valor 0
+        // garante que a quantidade de todos começa em zero
         mapa.put("EM_PLANEJAMENTO", 0);
         mapa.put("EM_EXECUCAO", 0);
         mapa.put("FINALIZADO", 0);
@@ -85,7 +85,7 @@ public class MetricasDAO {
         return mapa;
     }
 
-    // retorna um mapa status -> quantidade para todos os leads
+    // retorna a quantidade de leads por status
     public Map<String, Integer> buscarLeadsPorStatus() {
         Map<String, Integer> mapa = new LinkedHashMap<>();
         mapa.put("PROSPECCAO", 0);
@@ -105,7 +105,7 @@ public class MetricasDAO {
         return mapa;
     }
 
-    // taxa de conversão: leads FECHADOS / total de leads * 100
+    // taxa de conversão: leads fechados / total de leads * 100
     public double buscarTaxaConversao() {
         String sql = "SELECT " +
                      "  COUNT(*) AS total, " +

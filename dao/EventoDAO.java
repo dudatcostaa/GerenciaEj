@@ -17,7 +17,7 @@ public class EventoDAO {
         this.connection = DatabaseConnection.getInstance().getConnection();
     }
 
-    // RF13 — cadastra um novo evento vinculado à EJ do usuário
+    // RF13 — cadastra um novo evento vinculado a ej do usuário
     // o criador é automaticamente adicionado como convidado/participante
     public Evento cadastrar(String titulo, String descricao, Date data, Long empresaJuniorId, Long criadorId) {
         String sql = "INSERT INTO evento (titulo, descricao, data, empresa_junior_id) VALUES (?, ?, ?, ?)";
@@ -67,7 +67,7 @@ public class EventoDAO {
         return lista;
     }
 
-    // busca um evento específico, garantindo que pertence à EJ informada
+    // busca um evento específico, garantindo que pertence a ej informada
     public Evento buscarPorId(Long id, Long empresaJuniorId) {
         String sql = "SELECT * FROM evento WHERE id = ? AND empresa_junior_id = ?";
 
@@ -100,7 +100,7 @@ public class EventoDAO {
         }
     }
 
-    // verifica se um usuário já foi convidado para o evento
+    // verifica se um usuário ja foi convidado para o evento
     public boolean jaConvidado(Long eventoId, Long usuarioId) {
         String sql = "SELECT 1 FROM evento_convidado WHERE evento_id = ? AND usuario_id = ?";
 
@@ -134,7 +134,7 @@ public class EventoDAO {
         return lista;
     }
 
-    // RN04 — lista os membros da mesma EJ, candidatos a convite
+    // RN04 — lista os membros da mesma ej, candidatos a convite
     public List<Usuario> listarMembrosDaEmpresa(Long empresaJuniorId) {
         String sql = "SELECT * FROM usuario WHERE empresa_junior_id = ?";
         List<Usuario> lista = new ArrayList<>();
@@ -151,7 +151,7 @@ public class EventoDAO {
         return lista;
     }
 
-    // busca o id da empresa júnior à qual o usuário pertence (null se não vinculado)
+    // busca o id da empresa júnior a qual o usuário pertence
     public Long buscarEmpresaJuniorId(Long usuarioId) {
         String sql = "SELECT empresa_junior_id FROM usuario WHERE id = ?";
 

@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
-import model.Arquivo;
 import model.BibliotecaService;
 import model.Cargo;
 import model.EmpresaJunior;
@@ -24,22 +23,9 @@ public class UsuarioView {
     private UsuarioController controller = new UsuarioController();
     private Scanner leitor = new Scanner(System.in);
 
-    // Mocks antes do banco
-    private List<Projeto> mockProjetos = new ArrayList<>();
     private BibliotecaService biblioService = new BibliotecaService();
     private List<Long> idsAtivos = Arrays.asList(1L, 2L, 3L);
     private controller.CandidaturaController candController = new controller.CandidaturaController();
-
-    public UsuarioView() {
-        mockProjetos.add(new Projeto(1L, "Teste A", "teste", StatusProjeto.EM_PLANEJAMENTO));
-        mockProjetos.add(new Projeto(2L, "Teste B", "teste", StatusProjeto.EM_PLANEJAMENTO));
-        mockProjetos.add(new Projeto(3L, "Teste C", "teste", StatusProjeto.EM_EXECUCAO));
-        mockProjetos.add(new Projeto(4L, "Teste D", "teste", StatusProjeto.FINALIZADO));
-        biblioService.adicionarArquivo(new Arquivo(101L, "Teste1", "/home/sofigazolla/formatacao.py", 2L));
-        biblioService.adicionarArquivo(new Arquivo(102L, "Teste2", "/home/sofigazolla/resolucao_p1_2015.pdf", 1L));
-        biblioService.adicionarArquivo(new Arquivo(103L, "Teste3", "/home/sofigazolla/Sapixels-diretores.png", 3L));
-        biblioService.adicionarArquivo(new Arquivo(500L, "Teste4", "/home/sofigazolla/planodefundo.jpg", 99L));
-    }
 
     public void exibirMenuPrincipal() {
         while (true) {

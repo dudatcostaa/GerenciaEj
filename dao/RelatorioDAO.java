@@ -18,7 +18,7 @@ public class RelatorioDAO {
         this.connection = DatabaseConnection.getInstance().getConnection();
     }
 
-    // faturamento: soma dos projetos cuja data_inicio cai na semana
+    // faturamento: soma dos projetos da semana da data inicio
     public double buscarFaturamentoPeriodo(Date inicio, Date fim) {
         String sql = "SELECT COALESCE(SUM(valor), 0) AS total FROM projeto " +
                      "WHERE data_inicio BETWEEN ? AND ?";
@@ -77,7 +77,7 @@ public class RelatorioDAO {
         return lista;
     }
 
-    // leads agrupados por status (snapshot atual)
+    // leads agrupados por status
     public Map<String, Integer> buscarLeadsPorStatus() {
         Map<String, Integer> mapa = new LinkedHashMap<>();
         mapa.put("PROSPECCAO", 0);
@@ -94,7 +94,7 @@ public class RelatorioDAO {
         return mapa;
     }
 
-    // projetos agrupados por status (snapshot atual)
+    // projetos agrupados por status
     public Map<String, Integer> buscarProjetosPorStatus() {
         Map<String, Integer> mapa = new LinkedHashMap<>();
         mapa.put("EM_PLANEJAMENTO", 0);
@@ -110,7 +110,7 @@ public class RelatorioDAO {
         return mapa;
     }
 
-    // nome da EJ vinculada ao usuário
+    // nome da ej vinculada ao usuário
     public String buscarNomeEJ(Long usuarioId) {
         String sql = "SELECT ej.nome FROM empresa_junior ej " +
                      "JOIN usuario u ON u.empresa_junior_id = ej.id WHERE u.id = ?";

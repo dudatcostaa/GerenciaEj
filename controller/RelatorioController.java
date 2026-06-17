@@ -111,7 +111,7 @@ public class RelatorioController {
             pw.println();
 
             // ── Leads ───────────────────────────────────────────────────────
-            secao(pw, "FUNIL DE LEADS (snapshot atual)");
+            secao(pw, "FUNIL DE LEADS");
             pw.printf("  Prospecção  : %d%n", leads.getOrDefault("PROSPECCAO", 0));
             pw.printf("  Negociação  : %d%n", leads.getOrDefault("NEGOCIACAO", 0));
             pw.printf("  Fechados    : %d%n", leads.getOrDefault("FECHADO", 0));
@@ -123,7 +123,7 @@ public class RelatorioController {
             pw.println();
 
             // ── Projetos ────────────────────────────────────────────────────
-            secao(pw, "PROJETOS (snapshot atual)");
+            secao(pw, "PROJETOS");
             pw.printf("  Em planejamento : %d%n", projetos.getOrDefault("EM_PLANEJAMENTO", 0));
             pw.printf("  Em execução     : %d%n", projetos.getOrDefault("EM_EXECUCAO", 0));
             pw.printf("  Finalizados     : %d%n", projetos.getOrDefault("FINALIZADO", 0));

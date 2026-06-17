@@ -22,9 +22,7 @@ public class FuncionalidadeView {
     public void iniciar() {
         boolean rodando = true;
         while (rodando) {
-            System.out.println("\n========================================");
-            System.out.println("  GERENCIA EJ - FERRAMENTAS DE TRABALHO  ");
-            System.out.println("========================================");
+            System.out.println("--- GERENCIA EJ: FUNCIONALIDADES ---");
             System.out.println("1. Ver minhas ferramentas");
             System.out.println("2. Adicionar ferramenta");
             System.out.println("3. Remover ferramenta");
@@ -42,8 +40,6 @@ public class FuncionalidadeView {
         }
     }
 
-    // ─── ver ───────────────────────────────────────────────────────────────────
-
     private void verSelecionadas() {
         List<Funcionalidade> selecionadas = controller.listarSelecionadas(usuarioLogado.getId());
 
@@ -55,8 +51,6 @@ public class FuncionalidadeView {
             selecionadas.forEach(f -> System.out.println("  - " + f.getDescricao()));
         }
     }
-
-    // ─── adicionar ─────────────────────────────────────────────────────────────
 
     private void adicionar() {
         List<Funcionalidade> disponiveis = controller.listarDisponiveis(usuarioLogado.getId(), usuarioLogado.getCargo());
@@ -80,8 +74,6 @@ public class FuncionalidadeView {
         System.out.println(controller.adicionar(usuarioLogado.getId(), selecionada));
     }
 
-    // ─── remover ───────────────────────────────────────────────────────────────
-
     private void remover() {
         List<Funcionalidade> selecionadas = controller.listarSelecionadas(usuarioLogado.getId());
 
@@ -104,9 +96,6 @@ public class FuncionalidadeView {
         System.out.println(controller.remover(usuarioLogado.getId(), selecionada));
     }
 
-    // ─── helpers ───────────────────────────────────────────────────────────────
-
-    // lê uma opção entre 1 e max; retorna -1 para "0" (cancelar) ou entrada inválida
     private int lerOpcao(int max) {
         String entrada = scanner.nextLine().trim();
         try {

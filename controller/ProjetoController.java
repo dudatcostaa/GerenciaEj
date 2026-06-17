@@ -15,17 +15,17 @@ public class ProjetoController {
         this.dao = new ProjetoDAO();
     }
 
-    // UC — cadastra um novo projeto
+    // cadastra um novo projeto
     public Projeto cadastrar(String nome, String descricao, StatusProjeto status, double valor) {
         return dao.cadastrar(nome, descricao, status, valor);
     }
 
-    // UC — lista todos os projetos existentes
+    // lista todos os projetos existentes
     public List<Projeto> listarTodos() {
         return dao.listarTodos();
     }
 
-    // UC — edita nome, descrição, status, data de início e/ou valor de um projeto
+    // edita nome, descrição, status, data de início e/ou valor de um projeto
     public boolean editar(Long id, String novoNome, String novaDescricao,
                           StatusProjeto novoStatus, Date novaDataInicio, double novoValor) {
 
@@ -35,7 +35,7 @@ public class ProjetoController {
         return dao.atualizar(p);
     }
 
-    // UC — exclui o projeto e, em cascata, seu quadro e todas as tarefas
+    // exclui o projeto e, consequentemente, seu quadro e todas as tarefas
     public boolean excluir(Long id) {
         return dao.excluir(id);
     }

@@ -62,11 +62,11 @@ public class Lead {
 
     @Override
     public String toString() {
-        // Formatador 1: Para a criação (Apenas Data)
+        // apenas com data
         SimpleDateFormat formataCriacao = new SimpleDateFormat("dd/MM/yyyy");
         String criacaoStr = formataCriacao.format(dataCriacao);
 
-        // Formatador 2: Para a modificação (Data e Hora)
+        // com data e hora
         SimpleDateFormat formataModificacao = new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm");
         String modStr = formataModificacao.format(dataUltimaModificacao);
 

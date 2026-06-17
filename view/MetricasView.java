@@ -35,9 +35,7 @@ public class MetricasView {
     public void iniciar() {
         boolean rodando = true;
         while (rodando) {
-            System.out.println("\n========================================");
-            System.out.println("     GERENCIA EJ - MÉTRICAS             ");
-            System.out.println("========================================");
+            System.out.println("--- GERENCIA EJ: MÉTRICAS ---");
             System.out.println("1. Ver todas as métricas");
             System.out.println("2. Faturamento");
             System.out.println("3. Membros");
@@ -69,8 +67,6 @@ public class MetricasView {
         }
     }
 
-    // ─── todas juntas ──────────────────────────────────────────────────────────
-
     private void exibirTodasMetricas() {
         Calendar agora = Calendar.getInstance();
         int mes = agora.get(Calendar.MONTH) + 1;
@@ -91,8 +87,6 @@ public class MetricasView {
         separador();
         exibirResumoPropostas(mes, ano);
     }
-
-    // ─── seções individuais automáticas ───────────────────────────────────────
 
     private void exibirNomeEJ() {
         String nome = controller.buscarNomeEJ(usuarioLogado.getId());
@@ -135,8 +129,6 @@ public class MetricasView {
         System.out.printf( "  Tx. conversão : %.1f%%%n", controller.buscarTaxaConversao());
     }
 
-    // ─── resumos usados no painel completo ─────────────────────────────────────
-
     private void exibirResumoGastos(int mes, int ano) {
         cabecalho("GASTOS — " + nomeMes(mes) + "/" + ano);
         double total = gastoController.totalPorMes(mes, ano);
@@ -150,8 +142,6 @@ public class MetricasView {
         int qtd = propostaController.contarPorMes(mes, ano);
         System.out.println("  Enviadas no mês : " + qtd);
     }
-
-    // ─── menu de gastos ────────────────────────────────────────────────────────
 
     private void menuGastos() {
         boolean rodando = true;
@@ -213,8 +203,6 @@ public class MetricasView {
         System.out.printf("%n  TOTAL : R$ %,.2f%n", total);
     }
 
-    // ─── menu de propostas ─────────────────────────────────────────────────────
-
     private void menuPropostas() {
         boolean rodando = true;
         while (rodando) {
@@ -246,7 +234,7 @@ public class MetricasView {
         Double valor = lerValor("Valor proposto (ex: 3000.00): ");
         if (valor == null) return;
 
-        Date data = lerData("Data de envio (dd/MM/yyyy) [ENTER para hoje]: ");
+        Date data = lerData("Data de envio (dd/MM/yyyy) [clique enter para hoje]: ");
         if (data == null) data = new Date();
 
         Proposta criada = propostaController.cadastrar(nomeCliente, valor, data);
@@ -276,8 +264,6 @@ public class MetricasView {
         System.out.println("\n  Total de propostas : " + total);
     }
 
-    // ─── helpers ───────────────────────────────────────────────────────────────
-
     private Double lerValor(String prompt) {
         System.out.print(prompt);
         try {
@@ -293,7 +279,6 @@ public class MetricasView {
         }
     }
 
-    // retorna null se o usuário pressionar ENTER (sinaliza "usar hoje")
     private Date lerData(String prompt) {
         System.out.print(prompt);
         String entrada = scanner.nextLine().trim();

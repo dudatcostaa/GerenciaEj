@@ -7,7 +7,7 @@ public class ProntoState implements EstadoTarefa {
 
     @Override
     public String avancar(Tarefa tarefa) {
-        // última coluna do quadro — não há próximo estado
+        // não tem como avançar, como é o último
         return "[AVISO] A tarefa já está em PRONTO, não é possível avançar.";
     }
 

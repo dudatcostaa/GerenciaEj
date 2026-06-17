@@ -19,8 +19,8 @@ public class EventoController {
     }
 
     // UC12 / RF13 — agenda um novo evento na EJ do usuário
-    // RN09 — a data deve ser válida (garantido pelo parse na view) e não pode estar no passado
-    // o criador entra automaticamente como convidado/participante do evento
+    // RN09 — a data deve ser válida e não pode estar no passado
+    // o criador entra automaticamente como participante do evento
     public String cadastrar(Usuario usuarioLogado, String titulo, String descricao, Date data) {
         Long empresaJuniorId = dao.buscarEmpresaJuniorId(usuarioLogado.getId());
         if (empresaJuniorId == null) {
@@ -37,13 +37,12 @@ public class EventoController {
             : "[ERRO] Não foi possível agendar o evento.";
     }
 
-    // RF12 — lista os eventos em que o usuário é convidado/participante num mês/ano
+    // RF12 — lista os eventos em que o usuário é convidado num mês
     public List<Evento> listarPorMes(Usuario usuarioLogado, int mes, int ano) {
         return dao.listarPorMes(usuarioLogado.getId(), mes, ano);
     }
 
-    // lista os membros da mesma EJ que ainda não foram convidados para o evento
-    // (exclui o próprio usuário logado da lista)
+    // lista os membros da mesma EJ que ainda não foram convidados para o evento (exclui o próprio usuário logado da lista)
     public List<Usuario> listarConvidaveis(Usuario usuarioLogado, Evento evento) {
         Long empresaJuniorId = dao.buscarEmpresaJuniorId(usuarioLogado.getId());
         if (empresaJuniorId == null) return List.of();
