@@ -33,12 +33,11 @@ public class Tarefa {
         this.titulo = titulo;
     }
 
-    // mantém compatibilidade com o restante do sistema (persistência e exibição)
     public StatusTarefa getStatus() {
         return estado.getStatus();
     }
 
-    // usado pelo TarefaDAO ao carregar a tarefa do banco
+    // usado pelo tarefadao
     public void setStatus(StatusTarefa status) {
         this.estado = EstadoTarefaFactory.criar(status);
     }
@@ -51,8 +50,7 @@ public class Tarefa {
         this.estado = estado;
     }
 
-    // ─── padrão State (UC13) ────────────────────────────────────────────────────
-
+    // parte do padrão
     // tenta mover a tarefa para a próxima coluna do quadro
     public String avancar() {
         return estado.avancar(this);

@@ -38,7 +38,7 @@ public class ProjetoDAO {
         return null;
     }
 
-    // retorna todos os projetos em planejamento ou execução (os que aparecem no kamban)
+    // retorna todos os projetos em planejamento ou execução
     public List<Projeto> listarAtivos() {
         String sql = "SELECT * FROM projeto WHERE status IN ('EM_PLANEJAMENTO', 'EM_EXECUCAO')";
         List<Projeto> lista = new ArrayList<>();
@@ -54,7 +54,7 @@ public class ProjetoDAO {
         return lista;
     }
 
-    // retorna todos os projetos (usado no gerenciamento)
+    // retorna todos os projetos
     public List<Projeto> listarTodos() {
         String sql = "SELECT * FROM projeto ORDER BY data_inicio DESC";
         List<Projeto> lista = new ArrayList<>();
@@ -90,9 +90,7 @@ public class ProjetoDAO {
 
     // exclui projeto e, em cascade, seu quadro e tarefas
     public boolean excluir(Long id) {
-        // as tarefas dependem do quadro, que depende do projeto;
-        // se o banco tiver ON DELETE CASCADE configurado basta deletar o projeto.
-        // caso contrário, fazemos a exclusão manual na ordem correta.
+        // as tarefas dependem do quadro, que depende do projeto, então precisa deletar a tarefa e o quadro também
         String sqlTarefas  = "DELETE FROM tarefa WHERE quadro_kamban_id IN (SELECT id FROM quadro_kamban WHERE projeto_id = ?)";
         String sqlQuadro   = "DELETE FROM quadro_kamban WHERE projeto_id = ?";
         String sqlProjeto  = "DELETE FROM projeto WHERE id = ?";

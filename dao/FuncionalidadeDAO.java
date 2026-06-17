@@ -14,7 +14,7 @@ public class FuncionalidadeDAO {
         this.connection = DatabaseConnection.getInstance().getConnection();
     }
 
-    // RN03 — verifica se o usuário já selecionou essa funcionalidade
+    // RN03 — verifica se o usuário ja selecionou essa funcionalidade
     public boolean possui(Long usuarioId, Funcionalidade funcionalidade) {
         String sql = "SELECT 1 FROM usuario_funcionalidade WHERE usuario_id = ? AND funcionalidade = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {

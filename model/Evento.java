@@ -22,19 +22,53 @@ public class Evento {
         this.convidados = new ArrayList<>();
     }
 
-    public Long getId()              { return id; }
-    public String getTitulo()        { return titulo; }
-    public String getDescricao()     { return descricao; }
-    public Date getData()            { return data; }
-    public Long getEmpresaJuniorId() { return empresaJuniorId; }
-    public List<Usuario> getConvidados() { return convidados; }
+    public Long getId() {
+        return id;
+    }
 
-    public void setId(Long id)                       { this.id = id; }
-    public void setTitulo(String titulo)             { this.titulo = titulo; }
-    public void setDescricao(String descricao)       { this.descricao = descricao; }
-    public void setData(Date data)                   { this.data = data; }
-    public void setEmpresaJuniorId(Long id)          { this.empresaJuniorId = id; }
-    public void setConvidados(List<Usuario> convidados) { this.convidados = convidados; }
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public Date getData() {
+        return data;
+    }
+
+    public Long getEmpresaJuniorId() {
+        return empresaJuniorId;
+    }
+
+    public List<Usuario> getConvidados() {
+        return convidados;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public void setData(Date data) {
+        this.data = data;
+    }
+
+    public void setEmpresaJuniorId(Long id) {
+        this.empresaJuniorId = id;
+    }
+
+    public void setConvidados(List<Usuario> convidados) {
+        this.convidados = convidados;
+    }
 
     @Override
     public String toString() {

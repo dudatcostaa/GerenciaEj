@@ -3,8 +3,7 @@ package model.state;
 import model.StatusTarefa;
 
 /**
- * Converte o enum StatusTarefa (usado para persistência no banco e para
- * as cores da RNF04) no objeto de estado correspondente do padrão State.
+ * Converte o enum StatusTarefa no objeto de estado correspondente do padrão State.
  */
 public class EstadoTarefaFactory {
 

@@ -13,7 +13,7 @@ public class PendenteState implements EstadoTarefa {
 
     @Override
     public String voltar(Tarefa tarefa) {
-        // primeira coluna do quadro — não há estado anterior
+        // não tem como voltar por ser o primeiro estado
         return "[AVISO] A tarefa já está em PENDENTE, não é possível voltar.";
     }
 

@@ -13,7 +13,7 @@ public class BibliotecaView {
     // exibe o menu principal da biblioteca e retorna a opção escolhida
     public int mostrarMenu(String nomeUsuario, Cargo cargo) {
         System.out.println("\n--- GERENCIA EJ: BIBLIOTECA ---");
-        System.out.println("LOGADO: " + nomeUsuario + " (" + cargo + ")"); // temporário, para testar
+        System.out.println("LOGADO: " + nomeUsuario + " (" + cargo + ")");
         System.out.println("1. Fazer Upload");
         System.out.println("2. Ver e Abrir Arquivos");
         System.out.println("3. Excluir Arquivo");

@@ -67,7 +67,7 @@ public class KambanController {
             int opcao = view.mostrarMenuKamban(q.getTitulo());
 
             if (opcao == 1) {
-                // cadastra tarefa nova no banco e adiciona ao quadro em memória
+                // cadastra tarefa nova no banco e adiciona ao quadro no banco
                 String titulo = view.pedirTituloTarefa();
                 Tarefa nova = tarefaDAO.cadastrar(titulo, q.getId());
                 if (nova != null) {
@@ -75,7 +75,7 @@ public class KambanController {
                     quadroDAO.atualizarContador(q);
                 }
             } else if (opcao == 2) {
-                // move tarefa entre colunas (padrão State) e salva no banco
+                // move tarefa entre colunas e salva no banco
                 long id = view.pedirIdTarefa();
                 Tarefa tarefa = q.getTarefas().stream()
                         .filter(t -> t.getId() == id)
@@ -96,8 +96,7 @@ public class KambanController {
                     }
 
                     view.mostrarMensagem(resultado);
-                    // persiste o status atual (pode não ter mudado, se a tarefa
-                    // já estava na primeira ou última coluna)
+                    // mantém o status, caso esteja na última/primeira coluna e não possa ser movido
                     tarefaDAO.atualizarStatus(tarefa.getId(), tarefa.getStatus());
                 } else {
                     view.mostrarMensagem("Tarefa não encontrada.");

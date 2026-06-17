@@ -20,9 +20,7 @@ public class RelatorioView {
     }
 
     public void iniciar() {
-        System.out.println("\n========================================");
-        System.out.println("     GERENCIA EJ - RELATÓRIO SEMANAL    ");
-        System.out.println("========================================");
+        System.out.println("--- GERENCIA EJ: RELATÓRIO SEMANAL ---");
 
         int semanaAtual = controller.semanaAtual();
         int anoAtual    = controller.anoAtual();
