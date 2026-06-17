@@ -11,7 +11,7 @@ public class DatabaseConnection {
 
     private static final String URL      = "jdbc:mysql://localhost:3306/gerencia_ej_unificado";
     private static final String USER     = "root";
-    private static final String PASSWORD = "nova_senha";
+    private static final String PASSWORD = "91237783Duda!";
 
     private DatabaseConnection() {
         try {
